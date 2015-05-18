@@ -74,7 +74,7 @@ module.exports = function(md, options) {
       if (token.type !== "heading_close" || token.tag.substr(1, 1) != options.includeLevel || heading.type !== "inline") {
         continue; // Skip if not matching criteria
       }
-      headings.push("<li><a href=\"#\"" + options.slugify(heading.content) + "\">" + heading.content + "</a></li>");
+      headings.push("<li><a href=\"#" + options.slugify(heading.content) + "\">" + heading.content + "</a></li>");
     }
 
     return "<ul>" + headings.join("") + "</ul>";
