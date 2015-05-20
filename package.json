@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "description": "A Markdown-it plugin for adding a table of contents to markdown documents",
@@ -21,5 +21,8 @@
   },
   "author": "Oktavilla <https://github.com/Oktavilla>",
   "contributors": "Listed at <https://github.com/Oktavilla/markdown-it-table-of-contents/contributors>",
-  "dependencies": {}
+  "dependencies": {
+    "string": "~3.1.1",
+    "lodash.assign": "~3.2.0"
+  }
 }
