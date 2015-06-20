@@ -3,6 +3,7 @@ var string = require("string");
 var assign = require("lodash.assign");
 var defaults = {
   includeLevel: 2,
+  containerTag: "div",
   containerClass: "table-of-contents",
   slugify: function(str) {
     return string(str).slugify().toString();
@@ -59,11 +60,15 @@ module.exports = function(md, options) {
   }
 
   md.renderer.rules.toc_open = function(tokens, index) {
-    return "<div class=\"table-of-contents\">";
+    if(options.containerClass){
+      return "<" + options.containerTag + " class=\"" + options.containerClass + "\">";
+    }else{
+      return "<" + options.containerTag + ">";
+    }
   };
 
   md.renderer.rules.toc_close = function(tokens, index) {
-    return "</div>";
+    return "</" + options.containerTag + ">";
   };
 
   md.renderer.rules.toc_body = function(tokens, index) {

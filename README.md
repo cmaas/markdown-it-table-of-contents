@@ -59,7 +59,8 @@ These options are available:
 Name              | Description                               | Default
 ------------------|-------------------------------------------|------------------------------------
 "includeLevel"    | The heading level to use (2 for h2:s etc) | 2
-"containerClass"  | The class for the container DIV           | "table-of-contents"
+"containerTag"    | The tag for the container                 | "div"
+"containerClass"  | The class for the container               | "table-of-contents"
 "slugify"         | A custom slugification function           | [string.js' `slugify`][slugify]
 
 [slugify]: http://stringjs.com/#methods/slugify
