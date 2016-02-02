@@ -2,7 +2,7 @@
 var string = require("string");
 var assign = require("lodash.assign");
 var defaults = {
-  includeLevel: 2,
+  includeLevel: [ 1, 2 ],
   containerClass: "table-of-contents",
   slugify: function(str) {
     return string(str).slugify().toString();
@@ -67,18 +67,51 @@ module.exports = function(md, options) {
   };
 
   md.renderer.rules.toc_body = function(tokens, index) {
-    var headings = [];
-    for (var i = 0, size = gstate.tokens.length; i < size; i++) {
-      var token = gstate.tokens[i];
-      var heading = gstate.tokens[i - 1];
-      if (token.type !== "heading_close" || token.tag.substr(1, 1) != options.includeLevel || heading.type !== "inline") {
-        continue; // Skip if not matching criteria
-      }
-      headings.push("<li><a href=\"#" + options.slugify(heading.content) + "\">" + heading.content + "</a></li>");
-    }
-
-    return "<ul>" + headings.join("") + "</ul>";
+    return renderChildsTokens(0, gstate.tokens)[1];
   };
+
+  function renderChildsTokens(pos, tokens) {
+    var headings = [],
+        buffer = '',
+        currentLevel,
+        subHeadings,
+        size = tokens.length,
+        i = pos;
+    while(i < size) {
+      var token = tokens[i];
+      var heading = tokens[i - 1];
+      var level = parseInt(token.tag.substr(1, 1));
+      if (token.type !== "heading_close" || options.includeLevel.indexOf(level) == -1 || heading.type !== "inline") {
+        i++; continue; // Skip if not matching criteria
+      }
+      if (!currentLevel) {
+        currentLevel = level;// We init with the first found level
+      } else {
+        if (level > currentLevel) {
+          subHeadings = renderChildsTokens(i, tokens);
+          buffer += subHeadings[1];
+          i = subHeadings[0];
+          continue;
+        }
+        if (level < currentLevel) {
+          // Finishing the sub headings
+          buffer += "</li>";
+          headings.push(buffer);
+          return [i, "<ul>" + headings.join("") + "</ul>"];
+        }
+        if (level == currentLevel) {
+          // Finishing the sub headings
+          buffer += "</li>";
+          headings.push(buffer);
+        }
+      }
+      buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">" + heading.content + "</a>";
+      i++;
+    }
+    buffer += "</li>";
+    headings.push(buffer);
+    return [i, "<ul>" + headings.join("") + "</ul>"];
+  }
 
   // Catch all the tokens for iteration later
   md.core.ruler.push("grab_state", function(state) {
