@@ -35,8 +35,12 @@ Some even nicer text
 
 <div class="table-of-contents">
   <ul>
-    <li><a href="#sub-heading-1">Sub heading 1</a></li>
-    <li><a href="#sub-heading-2">Sub heading 2</a></li>
+    <li><a href="#heading">Heading</a>
+      <ul>
+        <li><a href="#sub-heading-1">Sub heading 1</a></li>
+        <li><a href="#sub-heading-2">Sub heading 2</a></li>
+      </ul>
+    </li>
   </ul>
 </div>
 
@@ -58,7 +62,7 @@ These options are available:
 
 Name              | Description                               | Default
 ------------------|-------------------------------------------|------------------------------------
-"includeLevel"    | The heading level to use (2 for h2:s etc) | 2
+"includeLevel"    | Headings levels to use (2 for h2:s etc)   | [1, 2]
 "containerClass"  | The class for the container DIV           | "table-of-contents"
 "slugify"         | A custom slugification function           | [string.js' `slugify`][slugify]
 
