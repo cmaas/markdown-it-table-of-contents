@@ -60,10 +60,11 @@ md.use(require("markdown-it-table-of-contents", options));
 
 These options are available:
 
-Name              | Description                               | Default
-------------------|-------------------------------------------|------------------------------------
-"includeLevel"    | Headings levels to use (2 for h2:s etc)   | [1, 2]
-"containerClass"  | The class for the container DIV           | "table-of-contents"
-"slugify"         | A custom slugification function           | [string.js' `slugify`][slugify]
+Name              | Description                                         | Default
+------------------|-----------------------------------------------------|------------------------------------
+"includeLevel"    | Headings levels to use (2 for h2:s etc)             | [1, 2]
+"containerClass"  | The class for the container DIV                     | "table-of-contents"
+"slugify"         | A custom slugification function                     | [string.js' `slugify`][slugify]
+"markerPattern"   | Regex pattern of the marker to be replaced with TOC | `/^\[\[toc\]\]/im`
 
 [slugify]: http://stringjs.com/#methods/slugify
