@@ -6,12 +6,13 @@ var defaults = {
   containerClass: "table-of-contents",
   slugify: function(str) {
     return string(str).slugify().toString();
-  }
+  },
+  markerPattern: /^\[\[toc\]\]/im
 };
 
 module.exports = function(md, options) {
   var options = assign({}, defaults, options);
-  var tocRegexp = /^\[\[toc\]\]/im;
+  var tocRegexp = options.markerPattern;
   var gstate;
 
   function toc(state, silent) {
