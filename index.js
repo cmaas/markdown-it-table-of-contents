@@ -31,7 +31,7 @@ module.exports = function(md, options) {
       return false;
     }
     // Don't run any pairs in validation mode
-    if (silent) { 
+    if (silent) {
       return false;
     }
 
@@ -98,7 +98,7 @@ module.exports = function(md, options) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
-          return [i, "<ul>" + headings.join("") + "</ul>"];
+          return [i, "<ol>" + headings.join("") + "</ol>"];
         }
         if (level == currentLevel) {
           // Finishing the sub headings
@@ -111,7 +111,7 @@ module.exports = function(md, options) {
     }
     buffer += "</li>";
     headings.push(buffer);
-    return [i, "<ul>" + headings.join("") + "</ul>"];
+    return [i, "<ol>" + headings.join("") + "</ol>"];
   }
 
   // Catch all the tokens for iteration later
