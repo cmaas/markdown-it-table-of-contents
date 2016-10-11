@@ -7,7 +7,8 @@ var defaults = {
   slugify: function(str) {
     return string(str).slugify().toString();
   },
-  markerPattern: /^\[\[toc\]\]/im
+  markerPattern: /^\[\[toc\]\]/im,
+  listType: "ul"
 };
 
 module.exports = function(md, options) {
@@ -31,7 +32,7 @@ module.exports = function(md, options) {
       return false;
     }
     // Don't run any pairs in validation mode
-    if (silent) { 
+    if (silent) {
       return false;
     }
 
@@ -98,7 +99,7 @@ module.exports = function(md, options) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
-          return [i, "<ul>" + headings.join("") + "</ul>"];
+          return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
         }
         if (level == currentLevel) {
           // Finishing the sub headings
@@ -111,7 +112,7 @@ module.exports = function(md, options) {
     }
     buffer += "</li>";
     headings.push(buffer);
-    return [i, "<ul>" + headings.join("") + "</ul>"];
+    return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
   }
 
   // Catch all the tokens for iteration later
