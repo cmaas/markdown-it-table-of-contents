@@ -1,5 +1,5 @@
 # markdown-it-table-of-contents
-A table of contents plugin for Markdown-it. Based on https://github.com/samchrisinger/markdown-it-toc but 
+A table of contents plugin for Markdown-it. Based on https://github.com/samchrisinger/markdown-it-toc but
 simpler, a bit more customizable and with a default slugifier that matches that of https://www.npmjs.com/package/markdown-it-anchor.
 
 ## Usage
@@ -66,5 +66,6 @@ Name              | Description                                         | Defaul
 "containerClass"  | The class for the container DIV                     | "table-of-contents"
 "slugify"         | A custom slugification function                     | [string.js' `slugify`][slugify]
 "markerPattern"   | Regex pattern of the marker to be replaced with TOC | `/^\[\[toc\]\]/im`
+"listType"        | Type of list (`ul` for unordered, `ol` for ordered) | `ul`
 
 [slugify]: http://stringjs.com/#methods/slugify
