@@ -8,7 +8,8 @@ var defaults = {
     return string(str).slugify().toString();
   },
   markerPattern: /^\[\[toc\]\]/im,
-  listType: "ul"
+  listType: "ul",
+  format: undefined
 };
 
 module.exports = function(md, options) {
@@ -107,7 +108,9 @@ module.exports = function(md, options) {
           headings.push(buffer);
         }
       }
-      buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">" + heading.content + "</a>";
+      buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">";
+      buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
+      buffer += "</a>";
       i++;
     }
     buffer += "</li>";

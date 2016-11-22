@@ -67,5 +67,15 @@ Name              | Description                                         | Defaul
 "slugify"         | A custom slugification function                     | [string.js' `slugify`][slugify]
 "markerPattern"   | Regex pattern of the marker to be replaced with TOC | `/^\[\[toc\]\]/im`
 "listType"        | Type of list (`ul` for unordered, `ol` for ordered) | `ul`
+"format"          | A function for formatting headings (see below)      | `undefined`
+
+
+`format` is an optional function for changing how the headings are displayed in the TOC.
+```js
+function format(headingAsString) {
+  // manipulate the headings as you like here.
+  return manipulatedHeadingString;
+}
+```
 
 [slugify]: http://stringjs.com/#methods/slugify
