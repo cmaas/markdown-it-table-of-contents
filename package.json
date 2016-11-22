@@ -1,8 +1,11 @@
 {
   "license": "MIT",
-  "version": "0.2.3",
+  "version": "0.3",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
+  "scripts": {
+    "test": "export NODE_ENV=test; mocha test --recursive"
+  },
   "description": "A Markdown-it plugin for adding a table of contents to markdown documents",
   "homepage": "https://github.com/Oktavilla/markdown-it-table-of-contents",
   "keywords": [
@@ -22,7 +25,12 @@
   "author": "Oktavilla <https://github.com/Oktavilla>",
   "contributors": "Listed at <https://github.com/Oktavilla/markdown-it-table-of-contents/contributors>",
   "dependencies": {
-    "string": "~3.1.1",
-    "lodash.assign": "~3.2.0"
+    "string": "~3.3.3",
+    "lodash.assign": "~4.2.0"
+  },
+  "devDependencies": {
+    "mocha": "~3.1.2",
+    "markdown-it": "~8.1.0",
+    "markdown-it-anchor": "~2.5.1"
   }
 }
