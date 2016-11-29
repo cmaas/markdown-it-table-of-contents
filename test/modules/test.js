@@ -75,6 +75,15 @@ describe("Testing Markdown rendering", function() {
     done();
   });
 
+  it("Parses correctly with skipHeadings set", function(done) {
+    var tocItemToNotRender = '<li><a href="#sub-heading-1">Sub heading 1</a></li>';
+    md.use(markdownItTOC, {
+      "skipHeadings": ['Sub heading 1']
+    });
+    assert.equal(md.render(simpleMarkdown), simpleDefaultHTML.replace(tocItemToNotRender, ''));
+    done();
+  });
+
   it("Slugs matches markdown-it-anchor", function(done) {
     md.use(markdownItAnchor);
     md.use(markdownItTOC);
