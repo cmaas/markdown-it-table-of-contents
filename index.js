@@ -21,13 +21,6 @@ module.exports = function(md, options) {
     var token;
     var match;
 
-    while (state.src.indexOf("\n") >= 0 && state.src.indexOf("\n") < state.src.indexOf("[[toc]]")) {
-      if (state.tokens.slice(-1)[0].type === "softbreak") {
-        state.src = state.src.split("\n").slice(1).join("\n");
-        state.pos = 0;
-      }
-    }
-
     // Reject if the token does not start with [
     if (state.src.charCodeAt(state.pos) !== 0x5B /* [ */ ) {
       return false;
