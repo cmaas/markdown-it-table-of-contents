@@ -2,7 +2,7 @@
 some text with soft break before toc  
 [[toc]]
 
-## Sub heading 1
+## Sub heading <span>1</span>
 Some nice text
 
 ## Sub heading 2
