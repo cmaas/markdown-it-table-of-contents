@@ -76,7 +76,7 @@ module.exports = function(md, options) {
     while(i < size) {
       var token = tokens[i];
       var heading = tokens[i - 1];
-      var level = parseInt(token.tag.substr(1, 1));
+      var level = token.tag && parseInt(token.tag.substr(1, 1));
       if (token.type !== "heading_close" || options.includeLevel.indexOf(level) == -1 || heading.type !== "inline") {
         i++; continue; // Skip if not matching criteria
       }
