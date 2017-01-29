@@ -9,7 +9,8 @@ var defaults = {
   },
   markerPattern: /^\[\[toc\]\]/im,
   listType: "ul",
-  format: undefined
+  format: undefined,
+  skipHeadings: []
 };
 
 module.exports = function(md, options) {
@@ -72,6 +73,7 @@ module.exports = function(md, options) {
         currentLevel,
         subHeadings,
         size = tokens.length,
+        didRender = false,
         i = pos;
     while(i < size) {
       var token = tokens[i];
@@ -89,21 +91,26 @@ module.exports = function(md, options) {
           i = subHeadings[0];
           continue;
         }
-        if (level < currentLevel) {
+        if (level < currentLevel && didRender) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
+          didRender = false;
           return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
         }
-        if (level == currentLevel) {
+        if (level == currentLevel && didRender) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
+          didRender = false;
         }
       }
-      buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">";
-      buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
-      buffer += "</a>";
+      if (options.skipHeadings.indexOf(heading.content) < 0) {
+        buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">";
+        buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
+        buffer += "</a>";
+        didRender = true;
+      }
       i++;
     }
     buffer += "</li>";
