@@ -11,6 +11,8 @@ var defaults = {
   listType: "ul",
   format: undefined
 };
+const bulletedListType = defaults.listType; //SA
+const noBulletStyle = " style=\"list-style-type: none;\""; //SA
 
 module.exports = function(md, options) {
   var options = assign({}, defaults, options);
@@ -93,7 +95,10 @@ module.exports = function(md, options) {
           // Finishing the sub headings
           buffer += "</li>";
           headings.push(buffer);
-          return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+          let effectiveStyle = "";
+          if (options.listType === bulletedListType) // SA
+            effectiveStyle = noBulletStyle;
+          return [i, "<" + options.listType + effectiveStyle + ">" + headings.join("") + "</" + options.listType + ">"];
         }
         if (level == currentLevel) {
           // Finishing the sub headings
@@ -108,7 +113,10 @@ module.exports = function(md, options) {
     }
     buffer += "</li>";
     headings.push(buffer);
-    return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+    let effectiveStyle = ""; // SA
+    if (options.listType === bulletedListType) // SA
+      effectiveStyle = noBulletStyle;
+    return [i, "<" + options.listType + effectiveStyle + ">" + headings.join("") + "</" + options.listType + ">"];
   }
 
   // Catch all the tokens for iteration later
