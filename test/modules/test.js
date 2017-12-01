@@ -5,17 +5,20 @@ var MarkdownIt = require("markdown-it");
 var markdownItAnchor = require("markdown-it-anchor");
 var markdownItTOC = require("../../index");
 
-// Fixtures
-var simpleMarkdown = fs.readFileSync("test/fixtures/simple.md", "utf-8");
-var simpleDefaultHTML = fs.readFileSync("test/fixtures/simple-default.html", "utf-8");
-var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf-8");
-var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
-
 // Defaults
 var defaultContainerClass = "table-of-contents";
 var defaultMarker = "[[toc]]";
 var defaultListType = "ul";
 var defaultHeading1 = "Sub heading 1";
+
+// Fixtures
+var simpleMarkdown = fs.readFileSync("test/fixtures/simple.md", "utf-8");
+var simpleDefaultHTML = fs.readFileSync("test/fixtures/simple-default.html", "utf-8");
+var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf-8");
+var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
+var emptyMarkdown = defaultMarker;
+var emptyMarkdownHtml = fs.readFileSync("test/fixtures/empty.html", "utf-8");
+
 
 describe("Testing Markdown rendering", function() {
   var md = new MarkdownIt();
@@ -82,4 +85,9 @@ describe("Testing Markdown rendering", function() {
     done();
   });
 
+  it("Generates empty TOC", function(done) {
+    md.use(markdownItTOC);
+    assert.equal(md.render(emptyMarkdown), emptyMarkdownHtml);
+    done();
+  })
 });
