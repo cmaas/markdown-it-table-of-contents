@@ -106,7 +106,7 @@ module.exports = function(md, options) {
       buffer += "</a>";
       i++;
     }
-    buffer += "</li>";
+    buffer += buffer === "" ? "" : "</li>";
     headings.push(buffer);
     return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
   }
