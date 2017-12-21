@@ -9,7 +9,8 @@ var defaults = {
   },
   markerPattern: /^\[\[toc\]\]/im,
   listType: "ul",
-  format: undefined
+  parseRaw: undefined,
+  format: undefined,
 };
 
 module.exports = function(md, options) {
@@ -101,6 +102,10 @@ module.exports = function(md, options) {
           headings.push(buffer);
         }
       }
+      if (typeof options.parseRaw === "function") {
+        heading.content = options.parseRaw(heading.content);
+      }
+
       buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">";
       buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
       buffer += "</a>";
