@@ -18,6 +18,8 @@ var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf
 var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
 var emptyMarkdown = defaultMarker;
 var emptyMarkdownHtml = fs.readFileSync("test/fixtures/empty.html", "utf-8");
+var fullTocSampleMarkdown = fs.readFileSync("test/fixtures/full-toc-sample.md", "utf-8");
+var fullTocSampleHtml = fs.readFileSync("test/fixtures/full-toc-sample-result.html", "utf-8");
 
 
 describe("Testing Markdown rendering", function() {
@@ -89,5 +91,11 @@ describe("Testing Markdown rendering", function() {
     md.use(markdownItTOC);
     assert.equal(md.render(emptyMarkdown), emptyMarkdownHtml);
     done();
-  })
+  });
+
+  it("Generates full TOC, even when there is a greater header than the first header", function (done) {
+    md.use(markdownItTOC, { forceFullToc: true });
+    assert.equal(md.render(fullTocSampleMarkdown), fullTocSampleHtml);
+    done();
+  });
 });
