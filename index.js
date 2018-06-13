@@ -9,7 +9,8 @@ var defaults = {
   },
   markerPattern: /^\[\[toc\]\]/im,
   listType: "ul",
-  format: undefined
+  format: undefined,
+  forceFullToc: false,
 };
 
 module.exports = function(md, options) {
@@ -63,7 +64,36 @@ module.exports = function(md, options) {
   };
 
   md.renderer.rules.toc_body = function(tokens, index) {
-    return renderChildsTokens(0, gstate.tokens)[1];
+    if (options.forceFullToc) {
+      /*
+      
+      Renders full TOC even if the hierarchy of headers contains
+      a header greater than the first appearing header
+      
+      ## heading 2
+      ### heading 3
+      # heading 1
+      
+      Result TOC:
+      - heading 2
+         - heading 3
+      - heading 1 
+
+      */
+      var tocBody = "";
+      var pos = 0;
+      var tokenLength = gstate && gstate.tokens && gstate.tokens.length;
+
+      while (pos < tokenLength) {
+        var tocHierarchy = renderChildsTokens(pos, gstate.tokens);
+        pos = tocHierarchy[0];
+        tocBody += tocHierarchy[1];
+      }
+
+      return tocBody;
+    } else {
+      return renderChildsTokens(0, gstate.tokens)[1];
+    }
   };
 
   function renderChildsTokens(pos, tokens) {
