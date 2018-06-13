@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "scripts": {
