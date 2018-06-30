@@ -63,7 +63,7 @@ Name              | Description                                                 
 ------------------|-------------------------------------------------------------------------------------|------------------------------------
 "includeLevel"    | Headings levels to use (2 for h2:s etc)                                             | [1, 2]
 "containerClass"  | The class for the container DIV                                                     | "table-of-contents"
-"slugify"         | A custom slugification function                                                     | [string.js' `slugify`][slugify]
+"slugify"         | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
 "markerPattern"   | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
 "listType"        | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
 "format"          | A function for formatting headings (see below)                                      | `undefined`
@@ -77,5 +77,3 @@ function format(headingAsString) {
   return manipulatedHeadingString;
 }
 ```
-
-[slugify]: http://stringjs.com/#methods/slugify
