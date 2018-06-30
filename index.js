@@ -1,22 +1,19 @@
-"use strict";
-var string = require("string");
-var assign = require("lodash.assign");
-var defaults = {
+'use strict';
+const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
+const defaults = {
   includeLevel: [ 1, 2 ],
-  containerClass: "table-of-contents",
-  slugify: function(str) {
-    return string(str).slugify().toString();
-  },
+  containerClass: 'table-of-contents',
+  slugify,
   markerPattern: /^\[\[toc\]\]/im,
-  listType: "ul",
+  listType: 'ul',
   format: undefined,
   forceFullToc: false,
 };
 
-module.exports = function(md, options) {
-  var options = assign({}, defaults, options);
-  var tocRegexp = options.markerPattern;
-  var gstate;
+module.exports = (md, o) => {
+  const options = Object.assign({}, defaults, o);
+  const tocRegexp = options.markerPattern;
+  let gstate;
 
   function toc(state, silent) {
     var token;
@@ -39,13 +36,13 @@ module.exports = function(md, options) {
     }
 
     // Build content
-    token = state.push("toc_open", "toc", 1);
-    token.markup = "[[toc]]";
-    token = state.push("toc_body", "", 0);
-    token = state.push("toc_close", "toc", -1);
+    token = state.push('toc_open', 'toc', 1);
+    token.markup = '[[toc]]';
+    token = state.push('toc_body', '', 0);
+    token = state.push('toc_close', 'toc', -1);
 
     // Update pos so the parser can continue
-    var newline = state.src.indexOf("\n");
+    var newline = state.src.indexOf('\n');
     if (newline !== -1) {
       state.pos = state.pos + newline;
     } else {
@@ -56,11 +53,11 @@ module.exports = function(md, options) {
   }
 
   md.renderer.rules.toc_open = function(tokens, index) {
-    return '<div class="' + options.containerClass + '">';
+    return `<div class="${options.containerClass}">`;
   };
 
   md.renderer.rules.toc_close = function(tokens, index) {
-    return "</div>";
+    return `</div>`;
   };
 
   md.renderer.rules.toc_body = function(tokens, index) {
@@ -80,7 +77,7 @@ module.exports = function(md, options) {
       - heading 1 
 
       */
-      var tocBody = "";
+      var tocBody = '';
       var pos = 0;
       var tokenLength = gstate && gstate.tokens && gstate.tokens.length;
 
@@ -107,7 +104,7 @@ module.exports = function(md, options) {
       var token = tokens[i];
       var heading = tokens[i - 1];
       var level = token.tag && parseInt(token.tag.substr(1, 1));
-      if (token.type !== "heading_close" || options.includeLevel.indexOf(level) == -1 || heading.type !== "inline") {
+      if (token.type !== 'heading_close' || options.includeLevel.indexOf(level) == -1 || heading.type !== 'inline') {
         i++; continue; // Skip if not matching criteria
       }
       if (!currentLevel) {
@@ -121,31 +118,31 @@ module.exports = function(md, options) {
         }
         if (level < currentLevel) {
           // Finishing the sub headings
-          buffer += "</li>";
+          buffer += `</li>`;
           headings.push(buffer);
-          return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+          return [i, `<${options.listType}>${headings.join('')}</${options.listType}>`];
         }
         if (level == currentLevel) {
           // Finishing the sub headings
-          buffer += "</li>";
+          buffer += `</li>`;
           headings.push(buffer);
         }
       }
-      buffer = "<li><a href=\"#" + options.slugify(heading.content) + "\">";
-      buffer += typeof options.format === "function" ? options.format(heading.content) : heading.content;
-      buffer += "</a>";
+      buffer = `<li><a href="#${options.slugify(heading.content)}">`;
+      buffer += typeof options.format === 'function' ? options.format(heading.content) : heading.content;
+      buffer += `</a>`;
       i++;
     }
-    buffer += buffer === "" ? "" : "</li>";
+    buffer += buffer === '' ? '' : `</li>`;
     headings.push(buffer);
-    return [i, "<" + options.listType + ">" + headings.join("") + "</" + options.listType + ">"];
+    return [i, `<${options.listType}>${headings.join('')}</${options.listType}>`];
   }
 
   // Catch all the tokens for iteration later
-  md.core.ruler.push("grab_state", function(state) {
+  md.core.ruler.push('grab_state', function(state) {
     gstate = state;
   });
 
   // Insert TOC
-  md.inline.ruler.after("emphasis", "toc", toc);
+  md.inline.ruler.after('emphasis', 'toc', toc);
 };
