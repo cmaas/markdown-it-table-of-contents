@@ -1,6 +1,5 @@
 # markdown-it-table-of-contents
-A table of contents plugin for Markdown-it. Based on https://github.com/samchrisinger/markdown-it-toc but
-simpler, a bit more customizable and with a default slugifier that matches that of https://www.npmjs.com/package/markdown-it-anchor.
+A table of contents plugin for Markdown-it. Simple, customizable and with a default slugifier that matches that of https://www.npmjs.com/package/markdown-it-anchor (>5.0.0).
 
 ## Usage
 
