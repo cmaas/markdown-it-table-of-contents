@@ -8,6 +8,8 @@ const defaults = {
   listType: 'ul',
   format: undefined,
   forceFullToc: false,
+  containerHeaderHtml: undefined,
+  containerFooterHtml: undefined,
 };
 
 module.exports = (md, o) => {
@@ -53,11 +55,23 @@ module.exports = (md, o) => {
   }
 
   md.renderer.rules.toc_open = function(tokens, index) {
-    return `<div class="${options.containerClass}">`;
+    var tocOpenHtml = `<div class="${options.containerClass}">`;
+
+    if (options.containerHeaderHtml) {
+      tocOpenHtml += options.containerHeaderHtml;
+    }
+
+    return tocOpenHtml;
   };
 
   md.renderer.rules.toc_close = function(tokens, index) {
-    return `</div>`;
+    var tocFooterHtml = '';
+
+    if (options.containerFooterHtml) {
+      tocFooterHtml = options.containerFooterHtml;
+    }
+
+    return tocFooterHtml + `</div>`;
   };
 
   md.renderer.rules.toc_body = function(tokens, index) {
