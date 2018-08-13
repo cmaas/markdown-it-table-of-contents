@@ -42,9 +42,9 @@ module.exports = (md, o) => {
     token = state.push('toc_close', 'toc', -1);
 
     // Update pos so the parser can continue
-    var newline = state.src.indexOf('\n');
+    var newline = state.src.indexOf('\n', state.pos);
     if (newline !== -1) {
-      state.pos = state.pos + newline;
+      state.pos = newline;
     } else {
       state.pos = state.pos + state.posMax + 1;
     }
