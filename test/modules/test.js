@@ -16,11 +16,13 @@ var simpleMarkdown = fs.readFileSync("test/fixtures/simple.md", "utf-8");
 var simpleDefaultHTML = fs.readFileSync("test/fixtures/simple-default.html", "utf-8");
 var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf-8");
 var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
+var simpleWithHeaderFooterHTML = fs.readFileSync("test/fixtures/simple-with-header-footer.html", "utf-8");
 var emptyMarkdown = defaultMarker;
 var emptyMarkdownHtml = fs.readFileSync("test/fixtures/empty.html", "utf-8");
 var fullTocSampleMarkdown = fs.readFileSync("test/fixtures/full-toc-sample.md", "utf-8");
 var fullTocSampleHtml = fs.readFileSync("test/fixtures/full-toc-sample-result.html", "utf-8");
 
+const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
 describe("Testing Markdown rendering", function() {
   var md = new MarkdownIt();
@@ -96,6 +98,17 @@ describe("Testing Markdown rendering", function() {
   it("Generates full TOC, even when there is a greater header than the first header", function (done) {
     md.use(markdownItTOC, { forceFullToc: true });
     assert.equal(md.render(fullTocSampleMarkdown), fullTocSampleHtml);
+    done();
+  });
+
+  it("Parses correctly with container header and footer html set", function (done) {
+    md.use(markdownItTOC, 
+      { 
+        slugify,
+        containerHeaderHtml: `<div class="header">Contents</div>`,
+        containerFooterHtml: `<div class="footer">Footer</div>`, 
+      });
+    assert.equal(md.render(simpleMarkdown), simpleWithHeaderFooterHTML);
     done();
   });
 });
