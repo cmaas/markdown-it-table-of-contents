@@ -31,7 +31,7 @@ module.exports = (md, o) => {
     }
 
     // Detect TOC markdown
-    match = tocRegexp.exec(state.src);
+    match = tocRegexp.exec(state.src.substr(state.pos));
     match = !match ? [] : match.filter(function(m) { return m; });
     if (match.length < 1) {
       return false;
