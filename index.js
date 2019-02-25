@@ -6,7 +6,9 @@ const defaults = {
   slugify,
   markerPattern: /^\[\[toc\]\]/im,
   listType: 'ul',
-  format: undefined,
+  format: (content, md) => {
+    return md.renderInline(content);
+  },
   forceFullToc: false,
   containerHeaderHtml: undefined,
   containerFooterHtml: undefined,
@@ -77,18 +79,18 @@ module.exports = (md, o) => {
   md.renderer.rules.toc_body = function(tokens, index) {
     if (options.forceFullToc) {
       /*
-      
+
       Renders full TOC even if the hierarchy of headers contains
       a header greater than the first appearing header
-      
+
       ## heading 2
       ### heading 3
       # heading 1
-      
+
       Result TOC:
       - heading 2
          - heading 3
-      - heading 1 
+      - heading 1
 
       */
       var tocBody = '';
@@ -143,7 +145,7 @@ module.exports = (md, o) => {
         }
       }
       buffer = `<li><a href="#${options.slugify(heading.content)}">`;
-      buffer += typeof options.format === 'function' ? options.format(heading.content) : heading.content;
+      buffer += options.format(heading.content, md);
       buffer += `</a>`;
       i++;
     }

@@ -9,10 +9,11 @@ var markdownItTOC = require("../../index");
 var defaultContainerClass = "table-of-contents";
 var defaultMarker = "[[toc]]";
 var defaultListType = "ul";
-var defaultHeading1 = "Sub heading 1";
 
 // Fixtures
 var simpleMarkdown = fs.readFileSync("test/fixtures/simple.md", "utf-8");
+var simpleWithFormatting = fs.readFileSync("test/fixtures/simple-with-markdown-formatting.md", "utf-8");
+var simpleWithFormattingHTML = fs.readFileSync("test/fixtures/simple-with-markdown-formatting.html", "utf-8");
 var simpleDefaultHTML = fs.readFileSync("test/fixtures/simple-default.html", "utf-8");
 var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf-8");
 var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
@@ -68,17 +69,18 @@ describe("Testing Markdown rendering", function() {
     done();
   });
 
+  it("Formats markdown by default", function(done) {
+    md.use(markdownItTOC);
+    assert.equal(md.render(simpleWithFormatting), simpleWithFormattingHTML);
+    done();
+  });
+
   it("Parses correctly with custom formatting", function(done) {
-    var customHeading = "Test";
+    var customHeading = "Heading with custom formatting 123abc";
     md.use(markdownItTOC, {
-      "format": function(str) {
-        if (str === defaultHeading1) {
-          return customHeading;
-        }
-        return str;
-      }
+      format: function(str) { return customHeading; }
     });
-    assert.equal(md.render(simpleMarkdown), simpleDefaultHTML.replace(defaultHeading1, customHeading));
+    assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
     done();
   });
 
@@ -96,17 +98,20 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Generates full TOC, even when there is a greater header than the first header", function (done) {
-    md.use(markdownItTOC, { forceFullToc: true });
+    md.use(markdownItTOC, {
+      forceFullToc: true,
+      format: function(str) { return str; }
+    });
     assert.equal(md.render(fullTocSampleMarkdown), fullTocSampleHtml);
     done();
   });
 
   it("Parses correctly with container header and footer html set", function (done) {
-    md.use(markdownItTOC, 
-      { 
+    md.use(markdownItTOC,
+      {
         slugify,
         containerHeaderHtml: `<div class="header">Contents</div>`,
-        containerFooterHtml: `<div class="footer">Footer</div>`, 
+        containerFooterHtml: `<div class="footer">Footer</div>`,
       });
     assert.equal(md.render(simpleMarkdown), simpleWithHeaderFooterHTML);
     done();
