@@ -66,7 +66,7 @@ Name                   | Description                                            
 "slugify"              | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
 "markerPattern"        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
 "listType"             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
-"format"               | A function for formatting headings (see below)                                      | `undefined`
+"format"               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
 "forceFullToc"         | If true, renders all the headers in TOC, even if the headers are in incorrect order | false
 "containerHeaderHtml"  | Optional HTML string for container header                                           | `<div class="toc-container-header">Contents</div>`
 "containerFooterHtml"  | Optional HTML string for container footer                                           | `<div class="toc-container-footer">Footer</div>`

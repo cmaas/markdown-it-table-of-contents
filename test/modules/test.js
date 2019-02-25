@@ -98,6 +98,10 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Generates full TOC, even when there is a greater header than the first header", function (done) {
+    // TODO: The `forceFullToc` option doesn't work with the default `format`
+    //   function. By overriding the `format` function here, we can keep the
+    //   tests green. But that's lame. Need to figure out how to fix this before
+    //   merging.
     md.use(markdownItTOC, {
       forceFullToc: true,
       format: function(str) { return str; }
