@@ -10,6 +10,7 @@ const defaults = {
   forceFullToc: false,
   containerHeaderHtml: undefined,
   containerFooterHtml: undefined,
+  transformLink: undefined,
 };
 
 module.exports = (md, o) => {
@@ -142,7 +143,12 @@ module.exports = (md, o) => {
           headings.push(buffer);
         }
       }
-      buffer = `<li><a href="#${options.slugify(heading.content)}">`;
+      var slugifiedContent = options.slugify(heading.content);
+      var link = "#"+slugifiedContent;
+      if (options.transformLink) {
+          link = options.transformLink(link);
+      }
+      buffer = "<li><a href=\"" + link + "\">";
       buffer += typeof options.format === 'function' ? options.format(heading.content) : heading.content;
       buffer += `</a>`;
       i++;
