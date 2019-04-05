@@ -148,7 +148,7 @@ module.exports = (md, o) => {
       if (options.transformLink) {
           link = options.transformLink(link);
       }
-      buffer = "<li><a href=\"" + link + "\">";
+      buffer = `<li><a href="${link}">`;
       buffer += typeof options.format === 'function' ? options.format(heading.content) : heading.content;
       buffer += `</a>`;
       i++;
