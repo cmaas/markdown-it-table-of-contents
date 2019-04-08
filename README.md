@@ -79,3 +79,11 @@ function format(headingAsString) {
   return manipulatedHeadingString;
 }
 ```
+
+`transformLink` is an optional function for transform the link as you like.
+```js
+function transformLink(link) {
+  // transform the link as you like here.
+  return transformedLink;
+}
+```
