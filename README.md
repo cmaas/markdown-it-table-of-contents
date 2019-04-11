@@ -70,11 +70,20 @@ Name                   | Description                                            
 "forceFullToc"         | If true, renders all the headers in TOC, even if the headers are in incorrect order | false
 "containerHeaderHtml"  | Optional HTML string for container header                                           | `<div class="toc-container-header">Contents</div>`
 "containerFooterHtml"  | Optional HTML string for container footer                                           | `<div class="toc-container-footer">Footer</div>`
+"transformLink"        | A function for transforming the TOC links                                           | `undefined`
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 ```js
 function format(headingAsString) {
   // manipulate the headings as you like here.
   return manipulatedHeadingString;
+}
+```
+
+`transformLink` is an optional function for transform the link as you like.
+```js
+function transformLink(link) {
+  // transform the link as you like here.
+  return transformedLink;
 }
 ```
