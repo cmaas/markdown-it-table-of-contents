@@ -143,13 +143,16 @@ module.exports = (md, o) => {
           headings.push(buffer);
         }
       }
-      var slugifiedContent = options.slugify(heading.content);
+      var content = heading.children
+        .filter(token => token.type === 'text' || token.type === 'code_inline')
+        .reduce((acc, t) => acc + t.content, '')
+      var slugifiedContent = options.slugify(content);
       var link = "#"+slugifiedContent;
       if (options.transformLink) {
           link = options.transformLink(link);
       }
       buffer = `<li><a href="${link}">`;
-      buffer += typeof options.format === 'function' ? options.format(heading.content) : heading.content;
+      buffer += typeof options.format === 'function' ? options.format(content) : content;
       buffer += `</a>`;
       i++;
     }
