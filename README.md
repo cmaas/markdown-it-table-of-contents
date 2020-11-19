@@ -74,13 +74,13 @@ Name                   | Description                                            
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
-By default, TOC headings will be formatted using markdown-it's internal MD formatting rules (i.e. it will be formatted the same rules / extensions other markdown in your document). You can override this behavior by specifying a custom `format` function. The function should accept two arguments:
+By default, TOC headings will be formatted using markdown-it's internal MD formatting rules (i.e. it will be formatted using the same rules / extensions as other markdown in your document). You can override this behavior by specifying a custom `format` function. The function should accept two arguments:
 
-1. `headingAsString` - The heading test, as a markdown string.
+1. `content` - The heading test, as a markdown string.
 2. `md` – markdown-it's internal markdown parser object. This should only be need for advanced use cases.
 
 ```js
-function format(headingAsString, md) {
+function format(content, md) {
   // manipulate the headings as you like here.
   return manipulatedHeadingString;
 }
