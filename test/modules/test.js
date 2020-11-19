@@ -18,6 +18,7 @@ var simpleDefaultHTML = fs.readFileSync("test/fixtures/simple-default.html", "ut
 var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf-8");
 var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
 var simpleWithHeaderFooterHTML = fs.readFileSync("test/fixtures/simple-with-header-footer.html", "utf-8");
+var simpleWithTransformLink = fs.readFileSync("test/fixtures/simple-with-transform-link.html", "utf-8");
 var emptyMarkdown = defaultMarker;
 var emptyMarkdownHtml = fs.readFileSync("test/fixtures/empty.html", "utf-8");
 var fullTocSampleMarkdown = fs.readFileSync("test/fixtures/full-toc-sample.md", "utf-8");
@@ -118,6 +119,18 @@ describe("Testing Markdown rendering", function() {
         containerFooterHtml: `<div class="footer">Footer</div>`,
       });
     assert.equal(md.render(simpleMarkdown), simpleWithHeaderFooterHTML);
+    done();
+  });
+
+  it("Generates TOC, with custom transformed link", function (done) {
+    md.use(markdownItTOC, 
+      { 
+        slugify,
+        transformLink: (href) => {
+          return href+"&type=test";
+        },
+      });
+    assert.equal(md.render(simpleMarkdown), simpleWithTransformLink);
     done();
   });
 });

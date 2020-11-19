@@ -14,6 +14,7 @@ var defaults = {
   forceFullToc: false,
   containerHeaderHtml: undefined,
   containerFooterHtml: undefined,
+  transformLink: undefined,
 };
 
 module.exports = function(md, o) {
@@ -146,9 +147,14 @@ module.exports = function(md, o) {
           headings.push(buffer);
         }
       }
-      buffer = '<li><a href="#'+ options.slugify(heading.content) +'">';
+      var slugifiedContent = options.slugify(heading.content);
+      var link = "#"+slugifiedContent;
+      if (options.transformLink) {
+          link = options.transformLink(link);
+      }
+      buffer = `<li><a href="${link}">`;
       buffer += options.format(heading.content, md);
-      buffer += "</a>";
+      buffer += `</a>`;
       i++;
     }
     buffer += buffer === '' ? '' : '</li>';
