@@ -81,32 +81,7 @@ module.exports = function(md, o) {
 
   md.renderer.rules.toc_body = function(tokens, index) {
     if (options.forceFullToc) {
-      /*
-
-      Renders full TOC even if the hierarchy of headers contains
-      a header greater than the first appearing header
-
-      ## heading 2
-      ### heading 3
-      # heading 1
-
-      Result TOC:
-      - heading 2
-         - heading 3
-      - heading 1
-
-      */
-      var tocBody = '';
-      var pos = 0;
-      var tokenLength = gstate && gstate.tokens && gstate.tokens.length;
-
-      while (pos < tokenLength) {
-        var tocHierarchy = renderChildsTokens(pos, gstate.tokens);
-        pos = tocHierarchy[0];
-        tocBody += tocHierarchy[1];
-      }
-
-      return tocBody;
+      throw("forceFullToc was removed in version 0.5.0. For more information, see https://github.com/Oktavilla/markdown-it-table-of-contents/pull/41")
     } else {
       return renderChildsTokens(0, gstate.tokens)[1];
     }

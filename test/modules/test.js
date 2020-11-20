@@ -98,16 +98,11 @@ describe("Testing Markdown rendering", function() {
     done();
   });
 
-  it("Generates full TOC, even when there is a greater header than the first header", function (done) {
-    // TODO: The `forceFullToc` option doesn't work with the default `format`
-    //   function. By overriding the `format` function here, we can keep the
-    //   tests green. But that's lame. Need to figure out how to fix this before
-    //   merging.
+  it("Throws an error if forceFullToc is enabled", function (done) {
     md.use(markdownItTOC, {
-      forceFullToc: true,
-      format: function(str) { return str; }
+      forceFullToc: true
     });
-    assert.equal(md.render(fullTocSampleMarkdown), fullTocSampleHtml);
+    assert.throws(() => md.render(simpleMarkdown), /forceFullToc was removed/);
     done();
   });
 
@@ -123,8 +118,8 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Generates TOC, with custom transformed link", function (done) {
-    md.use(markdownItTOC, 
-      { 
+    md.use(markdownItTOC,
+      {
         slugify,
         transformLink: (href) => {
           return href+"&type=test";
