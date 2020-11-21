@@ -4,7 +4,7 @@
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "scripts": {
-    "test": "export NODE_ENV=test; mocha test --recursive"
+    "test": "mocha test --recursive"
   },
   "engines": {
     "node": ">6.4.0"
