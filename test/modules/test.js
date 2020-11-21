@@ -85,6 +85,18 @@ describe("Testing Markdown rendering", function() {
     done();
   });
 
+  it("Custom formatting includes markdown and link", function(done) {
+    md.use(markdownItTOC, {
+      format: function(str, md, link) {
+        assert.ok(MarkdownIt.prototype.isPrototypeOf(md));
+        assert.notEqual(link, null);
+        return "customHeading";
+      }
+    });
+    assert.equal(md.render(simpleMarkdown).includes("customHeading"), true);
+    done();
+  });
+
   it("Slugs matches markdown-it-anchor", function(done) {
     md.use(markdownItAnchor);
     md.use(markdownItTOC);
