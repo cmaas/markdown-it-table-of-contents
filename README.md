@@ -66,15 +66,20 @@ Name                   | Description                                            
 "slugify"              | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
 "markerPattern"        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
 "listType"             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
-"format"               | A function for formatting headings (see below)                                      | `undefined`
-"forceFullToc"         | If true, renders all the headers in TOC, even if the headers are in incorrect order | false
+"format"               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
 "containerHeaderHtml"  | Optional HTML string for container header                                           | `<div class="toc-container-header">Contents</div>`
 "containerFooterHtml"  | Optional HTML string for container footer                                           | `<div class="toc-container-footer">Footer</div>`
 "transformLink"        | A function for transforming the TOC links                                           | `undefined`
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
+
+By default, TOC headings will be formatted using markdown-it's internal MD formatting rules (i.e. it will be formatted using the same rules / extensions as other markdown in your document). You can override this behavior by specifying a custom `format` function. The function should accept two arguments:
+
+1. `content` - The heading test, as a markdown string.
+2. `md` – markdown-it's internal markdown parser object. This should only be need for advanced use cases.
+
 ```js
-function format(headingAsString) {
+function format(content, md) {
   // manipulate the headings as you like here.
   return manipulatedHeadingString;
 }
