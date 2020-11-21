@@ -7,7 +7,7 @@ A table of contents plugin for Markdown-it. Simple, customizable and with a defa
 var MarkdownIt = require("markdown-it");
 var md = new MarkdownIt();
 
-md.use(require("markdown-it-anchor")); // Optional, but makes sense as you really want to link to something
+md.use(require("markdown-it-anchor").default); // Optional, but makes sense as you really want to link to something
 md.use(require("markdown-it-table-of-contents"));
 ```
 
