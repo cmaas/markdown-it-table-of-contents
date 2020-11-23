@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "node": ">6.4.0"
   },
   "description": "A Markdown-it plugin for adding a table of contents to markdown documents",
-  "homepage": "https://github.com/Oktavilla/markdown-it-table-of-contents",
+  "homepage": "https://github.com/martinlissmyr/markdown-it-table-of-contents",
   "keywords": [
     "markdown",
     "markdown-it",
@@ -20,13 +20,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Oktavilla/markdown-it-table-of-contents.git"
+    "url": "https://github.com/martinlissmyr/markdown-it-table-of-contents.git"
   },
   "bugs": {
-    "url": "https://github.com/Oktavilla/markdown-it-table-of-contents/issues"
+    "url": "https://github.com/martinlissmyr/markdown-it-table-of-contents/issues"
   },
-  "author": "Oktavilla <https://github.com/Oktavilla>",
-  "contributors": "Listed at <https://github.com/Oktavilla/markdown-it-table-of-contents/contributors>",
+  "author": "Martin Lissmyr <https://github.com/martinlissmyr>",
+  "contributors": "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>",
   "devDependencies": {
     "mocha": "~5.2.0",
     "markdown-it": "~8.1.0",
