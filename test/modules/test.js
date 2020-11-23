@@ -26,12 +26,22 @@ var fullTocSampleHtml = fs.readFileSync("test/fixtures/full-toc-sample-result.ht
 
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
+
+var endOfLine = require('os').EOL;
+
+function adjustEOL(text) {
+  if ('\n'!==endOfLine) {
+    text = text.replace( /([^\r])\n/g, '\$1'+endOfLine);
+  }
+  return text;
+}
+
 describe("Testing Markdown rendering", function() {
   var md = new MarkdownIt();
 
   it("Parses correctly with default settings", function(done) {
     md.use(markdownItTOC);
-    assert.equal(md.render(simpleMarkdown), simpleDefaultHTML);
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
     done();
   });
 
@@ -39,7 +49,7 @@ describe("Testing Markdown rendering", function() {
     md.use(markdownItTOC, {
       "includeLevel": [2]
     });
-    assert.equal(md.render(simpleMarkdown), simple1LevelHTML);
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simple1LevelHTML);
     done();
   });
 
@@ -48,7 +58,7 @@ describe("Testing Markdown rendering", function() {
     md.use(markdownItTOC, {
       "containerClass": customContainerClass
     });
-    assert.equal(md.render(simpleMarkdown), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
     done();
   });
 
@@ -57,7 +67,7 @@ describe("Testing Markdown rendering", function() {
     md.use(markdownItTOC, {
       "markerPattern": /^\[\[custom-marker\]\]/im
     });
-    assert.equal(md.render(simpleMarkdown.replace(defaultMarker, customMarker)), simpleDefaultHTML);
+    assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
     done();
   });
 
@@ -66,13 +76,13 @@ describe("Testing Markdown rendering", function() {
     md.use(markdownItTOC, {
       "listType": customListType
     });
-    assert.equal(md.render(simpleMarkdown), simpleDefaultHTML.replace(new RegExp(defaultListType, "g"), customListType));
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(new RegExp(defaultListType, "g"), customListType));
     done();
   });
 
   it("Formats markdown by default", function(done) {
     md.use(markdownItTOC);
-    assert.equal(md.render(simpleWithFormatting), simpleWithFormattingHTML);
+    assert.equal(adjustEOL(md.render(simpleWithFormatting)), simpleWithFormattingHTML);
     done();
   });
 
@@ -88,13 +98,13 @@ describe("Testing Markdown rendering", function() {
   it("Slugs matches markdown-it-anchor", function(done) {
     md.use(markdownItAnchor);
     md.use(markdownItTOC);
-    assert.equal(md.render(simpleMarkdown), simpleWithAnchorsHTML);
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
     done();
   });
 
   it("Generates empty TOC", function(done) {
     md.use(markdownItTOC);
-    assert.equal(md.render(emptyMarkdown), emptyMarkdownHtml);
+    assert.equal(adjustEOL(md.render(emptyMarkdown)), emptyMarkdownHtml);
     done();
   });
 
@@ -113,7 +123,7 @@ describe("Testing Markdown rendering", function() {
         containerHeaderHtml: `<div class="header">Contents</div>`,
         containerFooterHtml: `<div class="footer">Footer</div>`,
       });
-    assert.equal(md.render(simpleMarkdown), simpleWithHeaderFooterHTML);
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithHeaderFooterHTML);
     done();
   });
 
@@ -125,7 +135,7 @@ describe("Testing Markdown rendering", function() {
           return href+"&type=test";
         },
       });
-    assert.equal(md.render(simpleMarkdown), simpleWithTransformLink);
+    assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithTransformLink);
     done();
   });
 });
