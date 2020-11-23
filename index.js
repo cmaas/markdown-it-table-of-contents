@@ -128,7 +128,7 @@ module.exports = function(md, o) {
           link = options.transformLink(link);
       }
       buffer = `<li><a href="${link}">`;
-      buffer += options.format(heading.content, md);
+      buffer += options.format(heading.content, md, link);
       buffer += `</a>`;
       i++;
     }
