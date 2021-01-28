@@ -1,6 +1,9 @@
 # markdown-it-table-of-contents
 A table of contents plugin for Markdown-it. Simple, customizable and with a default slugifier that matches that of https://www.npmjs.com/package/markdown-it-anchor (>5.0.0).
 
+## Looking for maintainer
+I'm looking for someone to take over this package to maintain and improve on it. Interested? Open an issue and just quickly explain your thoughts... 
+
 ## Usage
 
 ``` javascript

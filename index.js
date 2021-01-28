@@ -124,7 +124,10 @@ module.exports = function(md, o) {
           headings.push(buffer);
         }
       }
-      var slugifiedContent = options.slugify(heading.content);
+      var content = heading.children
+        .filter((token) => token.type === 'text' || token.type === 'code_inline')
+        .reduce((acc, t) => acc + t.content, '');
+      var slugifiedContent = options.slugify(content);
       var link = "#"+slugifiedContent;
       if (options.transformLink) {
           link = options.transformLink(link);
@@ -139,7 +142,7 @@ module.exports = function(md, o) {
       links.push(generatedLink);
 
       buffer = `<li><a href="${generatedLink}">`;
-      buffer += options.format(heading.content, md, generatedLink);
+      buffer += options.format(content, md, generatedLink);
       buffer += `</a>`;
       i++;
     }
