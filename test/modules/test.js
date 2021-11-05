@@ -19,12 +19,16 @@ var simple1LevelHTML = fs.readFileSync("test/fixtures/simple-1-level.html", "utf
 var simpleWithAnchorsHTML = fs.readFileSync("test/fixtures/simple-with-anchors.html", "utf-8");
 var simpleWithHeaderFooterHTML = fs.readFileSync("test/fixtures/simple-with-header-footer.html", "utf-8");
 var simpleWithTransformLink = fs.readFileSync("test/fixtures/simple-with-transform-link.html", "utf-8");
-var simpleWithHeadingLink = fs.readFileSync("test/fixtures/simple-with-heading-link.md", "utf-8");
-var simpleWithHeadingLinkHTML = fs.readFileSync("test/fixtures/simple-with-heading-link.html", "utf-8");
+var simpleWithHeadingLink = fs.readFileSync("test/fixtures/simple-with-heading-links.md", "utf-8");
+var simpleWithHeadingLinkHTML = fs.readFileSync("test/fixtures/simple-with-heading-links.html", "utf-8");
 var emptyMarkdown = defaultMarker;
 var emptyMarkdownHtml = fs.readFileSync("test/fixtures/empty.html", "utf-8");
-var fullTocSampleMarkdown = fs.readFileSync("test/fixtures/full-toc-sample.md", "utf-8");
-var fullTocSampleHtml = fs.readFileSync("test/fixtures/full-toc-sample-result.html", "utf-8");
+
+var multiLevelMarkdown = fs.readFileSync("test/fixtures/multi-level.md", "utf-8");
+var multiLevel1234HTML = fs.readFileSync("test/fixtures/multi-level-1234.html", "utf-8");
+var multiLevel23HTML = fs.readFileSync("test/fixtures/multi-level-23.html", "utf-8");
+var strangeOrderMarkdown = fs.readFileSync("test/fixtures/strange-order.md", "utf-8");
+var strangeOrderHTML = fs.readFileSync("test/fixtures/strange-order.html", "utf-8");
 
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
@@ -39,15 +43,15 @@ function adjustEOL(text) {
 }
 
 describe("Testing Markdown rendering", function() {
-  var md = new MarkdownIt();
-
-  it("Parses correctly with default settings", function(done) {
+   it("Parses correctly with default settings", function(done) {
+    var md = new MarkdownIt();
     md.use(markdownItTOC);
     assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
     done();
   });
 
   it("Parses correctly with includeLevel set", function(done) {
+    var md = new MarkdownIt();
     md.use(markdownItTOC, {
       "includeLevel": [2]
     });
@@ -56,6 +60,7 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Parses correctly with containerClass set", function(done) {
+    var md = new MarkdownIt();
     var customContainerClass = "custom-container-class";
     md.use(markdownItTOC, {
       "containerClass": customContainerClass
@@ -65,6 +70,7 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Parses correctly with markerPattern set", function(done) {
+    var md = new MarkdownIt();
     var customMarker = "[[custom-marker]]";
     md.use(markdownItTOC, {
       "markerPattern": /^\[\[custom-marker\]\]/im
@@ -74,6 +80,7 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Parses correctly with listType set", function(done) {
+    var md = new MarkdownIt();
     var customListType = "ol";
     md.use(markdownItTOC, {
       "listType": customListType
@@ -83,12 +90,14 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Formats markdown by default", function(done) {
+    var md = new MarkdownIt();
     md.use(markdownItTOC);
     assert.equal(adjustEOL(md.render(simpleWithFormatting)), simpleWithFormattingHTML);
     done();
   });
 
   it("Parses correctly with custom formatting", function(done) {
+    var md = new MarkdownIt();
     var customHeading = "Heading with custom formatting 123abc";
     md.use(markdownItTOC, {
       format: function(str) { return customHeading; }
@@ -98,6 +107,7 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Custom formatting includes markdown and link", function(done) {
+    var md = new MarkdownIt();
     md.use(markdownItTOC, {
       format: function(str, md, link) {
         assert.ok(MarkdownIt.prototype.isPrototypeOf(md));
@@ -110,6 +120,7 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Slugs matches markdown-it-anchor", function(done) {
+    var md = new MarkdownIt();
     md.use(markdownItAnchor);
     md.use(markdownItTOC);
     assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
@@ -117,12 +128,16 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Generates empty TOC", function(done) {
+    var md = new MarkdownIt();
+    md.use(markdownItAnchor);
     md.use(markdownItTOC);
     assert.equal(adjustEOL(md.render(emptyMarkdown)), emptyMarkdownHtml);
     done();
   });
 
   it("Throws an error if forceFullToc is enabled", function (done) {
+    var md = new MarkdownIt();
+    md.use(markdownItAnchor);
     md.use(markdownItTOC, {
       forceFullToc: true
     });
@@ -131,6 +146,8 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Parses correctly with container header and footer html set", function (done) {
+    var md = new MarkdownIt();
+    md.use(markdownItAnchor);
     md.use(markdownItTOC,
       {
         slugify,
@@ -142,6 +159,8 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Generates TOC, with custom transformed link", function (done) {
+    var md = new MarkdownIt();
+    md.use(markdownItAnchor);
     md.use(markdownItTOC,
       {
         slugify,
@@ -154,8 +173,40 @@ describe("Testing Markdown rendering", function() {
   });
 
   it("Parses correctly when headers are links", function (done) {
+    var md = new MarkdownIt();
     md.use(markdownItTOC);
+    md.use(markdownItAnchor);
     assert.equal(adjustEOL(md.render(simpleWithHeadingLink)), simpleWithHeadingLinkHTML);
+    done();
+  });
+
+  it("Parses correctly with multiple levels", function(done) {
+    var md = new MarkdownIt();
+    //md.use(markdownItAnchor);
+    md.use(markdownItTOC, {
+      "includeLevel": [1, 2, 3, 4]
+    });
+    assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel1234HTML);
+    done();
+  });
+
+  it("Parses correctly with subset of multiple levels", function(done) {
+    var md = new MarkdownIt();
+    //md.use(markdownItAnchor);
+    md.use(markdownItTOC, {
+      "includeLevel": [2, 3]
+    });
+    assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel23HTML);
+    done();
+  });
+
+  it("Can manage headlines in a strange order", function(done) {
+    var md = new MarkdownIt();
+    //md.use(markdownItAnchor);
+    md.use(markdownItTOC, {
+      "includeLevel": [1, 2, 3]
+    });
+    assert.equal(adjustEOL(md.render(strangeOrderMarkdown)), strangeOrderHTML);
     done();
   });
 });
