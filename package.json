@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "scripts": {
@@ -26,10 +26,13 @@
     "url": "https://github.com/martinlissmyr/markdown-it-table-of-contents/issues"
   },
   "author": "Martin Lissmyr <https://github.com/martinlissmyr>",
-  "contributors": "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>",
+  "contributors": [
+    "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>"
+  ],
   "devDependencies": {
-    "mocha": "~5.2.0",
-    "markdown-it": "~8.1.0",
-    "markdown-it-anchor": "~5.0.1"
+    "markdown-it": "~8.4.2",
+    "markdown-it-anchor": "~5.0.1",
+    "markdown-it-attrs": "^2.4.1",
+    "mocha": "~5.2.0"
   }
 }
