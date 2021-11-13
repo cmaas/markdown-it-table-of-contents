@@ -26,6 +26,7 @@ const defaults = {
   containerHeaderHtml: undefined,
   containerFooterHtml: undefined,
   transformLink: undefined,
+  listAttrs: '',
 };
 
 /**
@@ -178,7 +179,7 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 * @returns {string}
 */
 function tocItemToHtml(tocItem, options, md) {
-  return '<' + options.listType + '>' + tocItem.children.map(childItem => {
+  return '<' + options.listType + ' ' + options.listAttrs + '>' + tocItem.children.map(childItem => {
     let li = '<li>';
     let anchor = childItem.anchor;
     if (options && options.transformLink) {
