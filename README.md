@@ -70,6 +70,7 @@ Name                   | Description                                            
 "containerHeaderHtml"  | Optional HTML string for container header                                           | `<div class="toc-container-header">Contents</div>`
 "containerFooterHtml"  | Optional HTML string for container footer                                           | `<div class="toc-container-footer">Footer</div>`
 "transformLink"        | A function for transforming the TOC links                                           | `undefined`
+"listAttrs"        | An optional string to pass attributes to the TOC list                                            | `''`
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
