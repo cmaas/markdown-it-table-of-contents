@@ -178,8 +178,12 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 * @param {TocItem} tocItem
 * @returns {string}
 */
-function tocItemToHtml(tocItem, options, md) {
-  return '<' + options.listType + ' ' + options.listAttrs + '>' + tocItem.children.map(childItem => {
+function tocItemToHtml(tocItem, options, md, counter = 0) {
+  let extraAttributes = ''
+  if (counter == 0){
+    if (options.listAttrs !== '') { extraAttributes = ' ' + options.listAttrs }
+  }
+  return '<' + options.listType + extraAttributes + '>' + tocItem.children.map(childItem => {
     let li = '<li>';
     let anchor = childItem.anchor;
     if (options && options.transformLink) {
@@ -190,7 +194,7 @@ function tocItemToHtml(tocItem, options, md) {
 
     li += anchor ? `<a href="#${anchor}">${text}</a>` : (text || '');
 
-    return li + (childItem.children.length > 0 ? tocItemToHtml(childItem, options, md) : '') + '</li>';
+    return li + (childItem.children.length > 0 ? tocItemToHtml(childItem, options, md, counter + 1) : '') + '</li>';
   }).join('') + '</' + options.listType + '>';
 }
 
