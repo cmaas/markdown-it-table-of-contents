@@ -30,7 +30,7 @@
     "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>"
   ],
   "devDependencies": {
-    "markdown-it": "~8.4.2",
+    "markdown-it": "~12.3.2",
     "markdown-it-anchor": "~5.0.1",
     "markdown-it-attrs": "^2.4.1",
     "mocha": "~5.2.0"
