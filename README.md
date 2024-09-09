@@ -11,11 +11,12 @@ md.use(require("markdown-it-anchor").default); // Optional, but makes sense as y
 md.use(require("markdown-it-table-of-contents"));
 ```
 
-Then add `[[toc]]` where you want the table of contents to be added in your markdown.
+Then add `[[toc]]` where you want the table of contents to be added in your document.
 
 ## Example markdown
 
 This markdown:
+
 ``` markdown
 # Heading
 
@@ -29,6 +30,7 @@ Some even nicer text
 ```
 
 ... would render this HTML using the default options specified in "usage" above:
+
 ``` html
 <h1 id="heading">Heading</h1>
 
@@ -53,7 +55,8 @@ Some even nicer text
 ## Options
 
 You may specify options when `use`ing the plugin. like so:
-``` javascript
+
+```js
 md.use(require("markdown-it-table-of-contents"), options);
 ```
 
@@ -67,9 +70,11 @@ Name                   | Description                                            
 "markerPattern"        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
 "listType"             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
 "format"               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
-"containerHeaderHtml"  | Optional HTML string for container header                                           | `<div class="toc-container-header">Contents</div>`
-"containerFooterHtml"  | Optional HTML string for container footer                                           | `<div class="toc-container-footer">Footer</div>`
+"containerHeaderHtml"  | Optional HTML string for container header                                           | `undefined`
+"containerFooterHtml"  | Optional HTML string for container footer                                           | `undefined`
 "transformLink"        | A function for transforming the TOC links                                           | `undefined`
+"transformContainerOpen"| A function for transforming the container opening tag                              | (see source code)
+"transformContainerClose"| A function for transforming the container closing tag                             | (see source code)
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
@@ -86,11 +91,25 @@ function format(content, md) {
 ```
 
 `transformLink` is an optional function for transform the link as you like.
+
 ```js
 function transformLink(link) {
   // transform the link as you like here.
   return transformedLink;
 }
+```
+
+`transformContainerOpen` and `transformContainerClose` can be used to replace the container element with one or several more like so:
+
+```js
+md.use(markdownItTOC, {
+    transformContainerOpen: () => {
+        return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
+    },
+    transformContainerClose: () => {
+        return '</nav>';
+    }
+});
 ```
 
 ## Recommended plugins
@@ -108,7 +127,7 @@ This plugin transforms all headlines in a markdown document so that the HTML cod
 Becomes
 
 ```html
-<h2 id="hello-world-i-think-you-should-read-this-article">Hello world</h2>
+<h2 id="hello-world-i-think-you-should-read-this-article">Hello world, I think you should read this article</h2>
 ```
 
 ### [markdown-it-attrs](https://www.npmjs.com/package/markdown-it-attrs)

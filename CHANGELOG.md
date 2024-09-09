@@ -8,6 +8,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 –
 
+## [0.7.0] - 2024-09-09
+
+* **Added:** Override the container element
+* ⚠️ **BREAKING CHANGE:** The plugin moved from *inline mode* to *block mode* (fixes #62)
+* **Removed:** Old forceFullToc attribute
+
+***
+
+## Override the container element
+
+Two new options that accept functions that return HTML to render custom containers (and more elements if necessary):
+
+```js
+md.use(markdownItTOC, {
+    transformContainerOpen: () => {
+        return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
+    },
+    transformContainerClose: () => {
+        return '</nav>';
+    }
+});
+```
+
+## Inline mode is now block mode
+
+Input:
+
+```md
+[[toc]]
+```
+
+**Output before:**
+
+```html
+<p><div class="table-of-contents"></div></p>
+```
+
+**Output now:**
+
+```html
+<div class="table-of-contents"></div>
+```
+
+The TOC now is generated in block mode, which removes the wrapping `p` tag. Wrapping a `div` in a `p` is considered invalid HTML.
+
+If you really need a wrapping p-element, you can emulate the old behavior with the new container override functions:
+
+```js
+const md = new MarkdownIt();
+md.use(markdownItTOC, {
+    transformContainerOpen: () => {
+        return '<p><div class="table-of-contents">';
+    },
+    transformContainerClose: () => {
+        return '</div></p>';
+    }
+});
+```
+
+Be aware that the old tests/examples now behave differently when using soft breaks before the [[toc]] markup:
+
+Input:
+
+```md
+# Article
+Text with soft line break (two spaces)  
+[[toc]]
+
+## Headline
+```
+
+**Output before:**
+
+```md
+<h1>Article</h1>
+<p>Text with soft line break (two spaces)<br>
+<div class="table-of-contents">...</div></p>
+```
+
+**Output now:**
+
+```md
+<h1>Article</h1>
+<p>Text with soft line break (two spaces)</p>
+<div class="table-of-contents">...</div>
+```
+
+***
+
 ## [0.6.0] - 2021-11-12
 
 The TOC generator was rewritten, because the old *on-the-fly* generator couldn't deal with unexpected order of headings and double-indentations. It is now a three-step process:

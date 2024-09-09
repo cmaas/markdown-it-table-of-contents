@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "name": "markdown-it-table-of-contents",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "node": ">6.4.0"
   },
   "description": "A Markdown-it plugin for adding a table of contents to markdown documents",
-  "homepage": "https://github.com/martinlissmyr/markdown-it-table-of-contents",
+  "homepage": "https://github.com/cmaas/markdown-it-table-of-contents",
   "keywords": [
     "markdown",
     "markdown-it",
@@ -20,19 +20,20 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/martinlissmyr/markdown-it-table-of-contents.git"
+    "url": "https://github.com/cmaas/markdown-it-table-of-contents.git"
   },
   "bugs": {
-    "url": "https://github.com/martinlissmyr/markdown-it-table-of-contents/issues"
+    "url": "https://github.com/cmaas/markdown-it-table-of-contents/issues"
   },
-  "author": "Martin Lissmyr <https://github.com/martinlissmyr>",
+  "author": "Chris Maas <https://github.com/cmaas>",
   "contributors": [
-    "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>"
+    "Listed at <https://github.com/martinlissmyr/markdown-it-table-of-contents/contributors>",
+    "Original author: Martin Lissmyr <https://github.com/martinlissmyr>"
   ],
   "devDependencies": {
-    "markdown-it": "~8.4.2",
-    "markdown-it-anchor": "~5.0.1",
-    "markdown-it-attrs": "^2.4.1",
-    "mocha": "~5.2.0"
+    "markdown-it": "~14.1.0",
+    "markdown-it-anchor": "~9.2.0",
+    "markdown-it-attrs": "^4.2.0",
+    "mocha": "~10.7.3"
   }
 }
