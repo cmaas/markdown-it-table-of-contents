@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0] - 2024-09-10
 
-* **Added:** Option `getTokensText` to override how text is extracted from tokens to build headlines and slugs (fixes #61), similar to the function in markdown-it-anchor.
+* **Added:** Option `getTokensText` to override how text is extracted from tokens to build headlines and slugs (fixes #61), similar to the function in [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor).
 
 ***
 
