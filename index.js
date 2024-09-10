@@ -43,7 +43,8 @@ const defaultOptions = {
     containerFooterHtml: undefined,
     transformLink: undefined,
     transformContainerOpen: transformContainerOpen,
-    transformContainerClose: transformContainerClose
+    transformContainerClose: transformContainerClose,
+    getTokensText: getTokensText
 };
 
 /**
@@ -61,6 +62,17 @@ const defaultOptions = {
 * @property {Array<TocItem>} children Sub-items for this list item
 * @property {TocItem} parent Parent this item belongs to
 */
+
+/**
+ * Helper to extract text from tokens, same function as in markdown-it-anchor
+ * @returns {string}
+ */
+function getTokensText(tokens) {
+    return tokens
+      .filter(t => ['text', 'code_inline'].includes(t.type))
+      .map(t => t.content)
+      .join('');
+}
 
 /**
 * Finds all headline items for the defined levels in a Markdown document.
@@ -86,9 +98,7 @@ function findHeadlineElements(levels, tokens, options) {
             }
         }
         else if (currentHeading && token.type === 'inline') {
-            const textContent = token.children
-                .filter((childToken) => childToken.type === 'text' || childToken.type === 'code_inline')
-                .reduce((acc, t) => acc + t.content, '');
+            const textContent = options.getTokensText(token.children);
             currentHeading.text = textContent;
             if (!currentHeading.anchor) {
                 currentHeading.anchor = options.slugify(textContent, token.content);

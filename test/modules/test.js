@@ -304,4 +304,17 @@ describe('Testing Markdown rendering', function () {
         assert.equal(adjustEOL(md.render(basicMarkdown)), basicHTML);
         done();
     });
+
+    it('getTokensText', function (done) {
+        const md = new MarkdownIt();
+        md.use(markdownItTOC, {
+            getTokensText: tokens => tokens.filter(t => ['text', 'image'].includes(t.type)).map(t => t.content).join('')
+        });
+        assert.equal(
+            md.render('# H1 ![image](link) `code` _em_' + '\n' + '[[toc]]'),
+            '<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
+            '<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
+        );
+        done();
+    });
 });

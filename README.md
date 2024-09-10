@@ -1,5 +1,5 @@
 # markdown-it-table-of-contents
-A table of contents plugin for Markdown-it. Simple, customizable and with a default slugifier that matches that of https://www.npmjs.com/package/markdown-it-anchor (>5.0.0).
+A table of contents plugin for Markdown-it. Simple, customizable and with a default slugifier that matches that of [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor) (>5.0.0).
 
 ## Usage
 
@@ -64,17 +64,18 @@ These options are available:
 
 Name                   | Description                                                                         | Default
 -----------------------|-------------------------------------------------------------------------------------|------------------------------------
-"includeLevel"         | Headings levels to use (2 for h2:s etc)                                             | [1, 2]
-"containerClass"       | The class for the container DIV                                                     | "table-of-contents"
-"slugify"              | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
-"markerPattern"        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
-"listType"             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
-"format"               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
-"containerHeaderHtml"  | Optional HTML string for container header                                           | `undefined`
-"containerFooterHtml"  | Optional HTML string for container footer                                           | `undefined`
-"transformLink"        | A function for transforming the TOC links                                           | `undefined`
-"transformContainerOpen"| A function for transforming the container opening tag                              | (see source code)
-"transformContainerClose"| A function for transforming the container closing tag                             | (see source code)
+`includeLevel`         | Headings levels to use (2 for h2:s etc)                                             | [1, 2]
+`containerClass`       | The class for the container DIV                                                     | "table-of-contents"
+`slugify`              | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
+`markerPattern`        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
+`listType`             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
+`format`               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
+`containerHeaderHtml`  | Optional HTML string for container header                                           | `undefined`
+`containerFooterHtml`  | Optional HTML string for container footer                                           | `undefined`
+`transformLink`        | A function for transforming the TOC links                                           | `undefined`
+`transformContainerOpen`| A function for transforming the container opening tag                              | (see source code)
+`transformContainerClose`| A function for transforming the container closing tag                             | (see source code)
+`getTokensText`        | A function for extracting text from tokens for titles                               | (see source code)
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
@@ -111,6 +112,8 @@ md.use(markdownItTOC, {
     }
 });
 ```
+
+`getTokensText` is a function that can be used to change how text is extracted from tokens to support more ways how headlines are build. See source code for more information or the equivalent function in [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor).
 
 ## Recommended plugins
 

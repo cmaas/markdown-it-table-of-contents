@@ -6,12 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-–
+## [0.8.0] - 2024-09-10
+
+* **Added:** Option `getTokensText` to override how text is extracted from tokens to build headlines and slugs (fixes #61), similar to the function in markdown-it-anchor.
+
+***
 
 ## [0.7.0] - 2024-09-09
 
 * **Added:** Override the container element
 * ⚠️ **BREAKING CHANGE:** The plugin moved from *inline mode* to *block mode* (fixes #62)
+* **Changed:** Updated tests, readme etc.
 * **Removed:** Old forceFullToc attribute
 
 ***
