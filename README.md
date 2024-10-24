@@ -13,6 +13,8 @@ md.use(require("markdown-it-table-of-contents"));
 
 Then add `[[toc]]` where you want the table of contents to be added in your document.
 
+*Want to use a table of contents generator client-side in the browser? Try my `<table-of-contents>` webcomponent: [table-of-contents-element on GitHub](cmaas/table-of-contents-element). Advantage: can use more sophisticated query selector and better support for HTML customization.*
+
 ## Example markdown
 
 This markdown:
