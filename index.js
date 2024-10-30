@@ -11,7 +11,7 @@
 */
 
 const slugify = function (s) {
-    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
+    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-').replace(/[.\/$+()\[\]#@&%=]/g, ''));
 };
 
 const transformContainerOpen = function (containerClass, containerHeaderHtml) {
