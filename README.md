@@ -70,6 +70,7 @@ Name                   | Description                                            
 `containerClass`       | The class for the container DIV                                                     | "table-of-contents"
 `slugify`              | A custom slugification function                                                     | `encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'))`
 `markerPattern`        | Regex pattern of the marker to be replaced with TOC                                 | `/^\[\[toc\]\]/im`
+`omitTag`			   | HTML comment tag to exclude next headline from TOC									 | `<!-- omit from toc -->`
 `listType`             | Type of list (`ul` for unordered, `ol` for ordered)                                 | `ul`
 `format`               | A function for formatting headings (see below)                                      | `md.renderInline(content)`
 `containerHeaderHtml`  | Optional HTML string for container header                                           | `undefined`
@@ -218,6 +219,23 @@ HTML output:
 <p>Read this next...</p>
 <h4 id="related">See related articles</h4>
 ```
+
+## Example for omitting headlines from the TOC
+
+If you want to exclude single headlines, you can use a special HTML comment to omit the next headline from the TOC:
+
+```markdown
+<!-- omit from toc -->
+# Title
+```
+
+For this to work, the HTML comment must come right in the line before the headline you want to exclude. Furthermore, you need to allow HTML in MarkdownIT:
+
+```js
+const md = new MarkdownIt({ html: true });
+```
+
+You can override the HTML comment by using the option `omitTag` as explained above. Both, the tag and the actual comment in the Markdown file are case-insensitive.
 
 ## Additional infos
 

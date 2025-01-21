@@ -35,6 +35,7 @@ const defaultOptions = {
     containerClass: 'table-of-contents',
     slugify: slugify,
     markerPattern: /^\[\[toc\]\]/im,
+	omitTag: '<!-- omit from toc -->',
     listType: 'ul',
     format: function (content, md) {
         return md.renderInline(content);
@@ -85,9 +86,13 @@ function findHeadlineElements(levels, tokens, options) {
     const headings = [];
     let currentHeading = null;
 
-    tokens.forEach(token => {
+    tokens.forEach((token, index) => {
         if (token.type === 'heading_open') {
-            const id = findExistingIdAttr(token);
+            const prev = index > 0 ? tokens[index-1] : null;
+			if (prev && prev.type === 'html_block' && prev.content.trim().toLowerCase().replace('\n', '') === options.omitTag) {
+				return;
+			}
+			const id = findExistingIdAttr(token);
             const level = parseInt(token.tag.toLowerCase().replace('h', ''), 10);
             if (levels.indexOf(level) >= 0) {
                 currentHeading = {

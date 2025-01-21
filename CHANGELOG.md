@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2025-01-21
+
+* **Added:** Headlines can now be omitted from the table of contents by placing a special HTML comment tag before the headline (fixes #65).
+* **Added:** Option `omitTag` can override the default tag `<!-- omit from toc -->`
+
+***
+
 ## [0.8.0] - 2024-09-10
 
 * **Added:** Option `getTokensText` to override how text is extracted from tokens to build headlines and slugs (fixes #61), similar to the function in [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor).

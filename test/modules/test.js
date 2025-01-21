@@ -47,6 +47,13 @@ const fullExampleCustomContainerHTML = fs.readFileSync('test/fixtures/full-examp
 const basicMarkdown = fs.readFileSync('test/fixtures/basic.md', 'utf-8');
 const basicHTML = fs.readFileSync('test/fixtures/basic.html', 'utf-8');
 
+const anchorsSpecialCharsMarkdown = fs.readFileSync('test/fixtures/anchors-special-chars.md', 'utf-8');
+const anchorsSpecialCharsHTML = fs.readFileSync('test/fixtures/anchors-special-chars.html', 'utf-8');
+
+const omitMarkdown = fs.readFileSync('test/fixtures/omit.md', 'utf-8');
+const omitHTML = fs.readFileSync('test/fixtures/omit.html', 'utf-8');
+
+
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
 
@@ -66,8 +73,6 @@ describe('Testing Markdown rendering', function () {
         assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
         done();
     });
-
-
 
     it('Parses correctly with includeLevel set', function (done) {
         const md = new MarkdownIt();
@@ -143,6 +148,14 @@ describe('Testing Markdown rendering', function () {
         md.use(markdownItAnchor, markdownItAnchorOpts);
         md.use(markdownItTOC);
         assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
+        done();
+    });
+
+    it('Slugs match markdown-it-anchor with special chars', function (done) {
+        const md = new MarkdownIt();
+        md.use(markdownItAnchor, markdownItAnchorOpts);
+        md.use(markdownItTOC);
+        assert.equal(adjustEOL(md.render(anchorsSpecialCharsMarkdown)), anchorsSpecialCharsHTML);
         done();
     });
 
@@ -315,6 +328,13 @@ describe('Testing Markdown rendering', function () {
             '<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
             '<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
         );
+        done();
+    });
+
+	it('Omits headlines', function (done) {
+        const md = new MarkdownIt({ html: true });
+        md.use(markdownItTOC, { omitTag: '<!-- omit from toc -->'});
+        assert.equal(adjustEOL(md.render(omitMarkdown)), omitHTML);
         done();
     });
 });
