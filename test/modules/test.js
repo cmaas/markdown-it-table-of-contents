@@ -60,281 +60,281 @@ const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace
 const endOfLine = require('os').EOL;
 
 function adjustEOL(text) {
-    if ('\n' !== endOfLine) {
-        text = text.replace(/([^\r])\n/g, '$1' + endOfLine);
-    }
-    return text;
+	if ('\n' !== endOfLine) {
+		text = text.replace(/([^\r])\n/g, '$1' + endOfLine);
+	}
+	return text;
 }
 
 describe('Testing Markdown rendering', function () {
-    it('Parses correctly with default settings', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC);
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
-        done();
-    });
+	it('Parses correctly with default settings', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC);
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
+		done();
+	});
 
-    it('Parses correctly with includeLevel set', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [2]
-        });
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simple1LevelHTML);
-        done();
-    });
+	it('Parses correctly with includeLevel set', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [2]
+		});
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simple1LevelHTML);
+		done();
+	});
 
-    it('Parses correctly with containerClass set', function (done) {
-        const md = new MarkdownIt();
-        const customContainerClass = 'custom-container-class';
-        md.use(markdownItTOC, {
-            'containerClass': customContainerClass
-        });
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
-        done();
-    });
+	it('Parses correctly with containerClass set', function (done) {
+		const md = new MarkdownIt();
+		const customContainerClass = 'custom-container-class';
+		md.use(markdownItTOC, {
+			'containerClass': customContainerClass
+		});
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
+		done();
+	});
 
-    it('Parses correctly with markerPattern set', function (done) {
-        const md = new MarkdownIt();
-        const customMarker = '[[custom-marker]]';
-        md.use(markdownItTOC, {
-            'markerPattern': /^\[\[custom-marker\]\]/im
-        });
-        assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
-        done();
-    });
+	it('Parses correctly with markerPattern set', function (done) {
+		const md = new MarkdownIt();
+		const customMarker = '[[custom-marker]]';
+		md.use(markdownItTOC, {
+			'markerPattern': /^\[\[custom-marker\]\]/im
+		});
+		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
+		done();
+	});
 
-    it('Parses correctly with listType set', function (done) {
-        const md = new MarkdownIt();
-        const customListType = 'ol';
-        md.use(markdownItTOC, {
-            'listType': customListType
-        });
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(new RegExp(defaultListType, 'g'), customListType));
-        done();
-    });
+	it('Parses correctly with listType set', function (done) {
+		const md = new MarkdownIt();
+		const customListType = 'ol';
+		md.use(markdownItTOC, {
+			'listType': customListType
+		});
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(new RegExp(defaultListType, 'g'), customListType));
+		done();
+	});
 
-    it('Formats markdown by default', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC);
-        assert.equal(adjustEOL(md.render(simpleWithFormatting)), simpleWithFormattingHTML);
-        done();
-    });
+	it('Formats markdown by default', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC);
+		assert.equal(adjustEOL(md.render(simpleWithFormatting)), simpleWithFormattingHTML);
+		done();
+	});
 
-    it('Parses correctly with custom formatting', function (done) {
-        const md = new MarkdownIt();
-        const customHeading = 'Heading with custom formatting 123abc';
-        md.use(markdownItTOC, {
-            format: function (str) { return customHeading; }
-        });
-        assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
-        done();
-    });
+	it('Parses correctly with custom formatting', function (done) {
+		const md = new MarkdownIt();
+		const customHeading = 'Heading with custom formatting 123abc';
+		md.use(markdownItTOC, {
+			format: function (str) { return customHeading; }
+		});
+		assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
+		done();
+	});
 
-    it('Custom formatting includes markdown and link', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            format: function (str, md, link) {
-                assert.ok(MarkdownIt.prototype.isPrototypeOf(md));
-                assert.notEqual(link, null);
-                return 'customHeading';
-            }
-        });
-        assert.equal(md.render(simpleMarkdown).includes('customHeading'), true);
-        done();
-    });
+	it('Custom formatting includes markdown and link', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			format: function (str, md, link) {
+				assert.ok(MarkdownIt.prototype.isPrototypeOf(md));
+				assert.notEqual(link, null);
+				return 'customHeading';
+			}
+		});
+		assert.equal(md.render(simpleMarkdown).includes('customHeading'), true);
+		done();
+	});
 
-    it('Slugs match markdown-it-anchor', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        md.use(markdownItTOC);
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
-        done();
-    });
+	it('Slugs match markdown-it-anchor', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		md.use(markdownItTOC);
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
+		done();
+	});
 
-    it('Slugs match markdown-it-anchor with special chars', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        md.use(markdownItTOC);
-        assert.equal(adjustEOL(md.render(anchorsSpecialCharsMarkdown)), anchorsSpecialCharsHTML);
-        done();
-    });
+	it('Slugs match markdown-it-anchor with special chars', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		md.use(markdownItTOC);
+		assert.equal(adjustEOL(md.render(anchorsSpecialCharsMarkdown)), anchorsSpecialCharsHTML);
+		done();
+	});
 
-    it('Generates empty TOC', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        md.use(markdownItTOC);
-        assert.equal(adjustEOL(md.render(emptyMarkdown)), emptyMarkdownHtml);
-        done();
-    });
+	it('Generates empty TOC', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		md.use(markdownItTOC);
+		assert.equal(adjustEOL(md.render(emptyMarkdown)), emptyMarkdownHtml);
+		done();
+	});
 
-    it('Parses correctly with container header and footer html set', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        md.use(markdownItTOC,
-            {
-                slugify,
-                containerHeaderHtml: '<div class="header">Contents</div>',
-                containerFooterHtml: '<div class="footer">Footer</div>',
-            });
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithHeaderFooterHTML);
-        done();
-    });
+	it('Parses correctly with container header and footer html set', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		md.use(markdownItTOC,
+			{
+				slugify,
+				containerHeaderHtml: '<div class="header">Contents</div>',
+				containerFooterHtml: '<div class="footer">Footer</div>',
+			});
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithHeaderFooterHTML);
+		done();
+	});
 
-    it('Generates TOC, with custom transformed link', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        md.use(markdownItTOC,
-            {
-                slugify,
-                transformLink: (href) => {
-                    return href + '&type=test';
-                },
-            });
-        assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithTransformLink);
-        done();
-    });
+	it('Generates TOC, with custom transformed link', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		md.use(markdownItTOC,
+			{
+				slugify,
+				transformLink: (href) => {
+					return href + '&type=test';
+				},
+			});
+		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithTransformLink);
+		done();
+	});
 
-    it('Parses correctly when headers are links', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC);
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        assert.equal(adjustEOL(md.render(simpleWithHeadingLink)), simpleWithHeadingLinkHTML);
-        done();
-    });
+	it('Parses correctly when headers are links', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC);
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		assert.equal(adjustEOL(md.render(simpleWithHeadingLink)), simpleWithHeadingLinkHTML);
+		done();
+	});
 
-    it('Parses correctly with duplicate headers', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [1, 2, 3, 4]
-        });
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        assert.equal(adjustEOL(md.render(simpleWithDuplicateHeadings)), simpleWithDuplicateHeadingsHTML);
-        done();
-    });
+	it('Parses correctly with duplicate headers', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [1, 2, 3, 4]
+		});
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		assert.equal(adjustEOL(md.render(simpleWithDuplicateHeadings)), simpleWithDuplicateHeadingsHTML);
+		done();
+	});
 
-    it('Parses correctly with multiple levels', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [1, 2, 3, 4]
-        });
-        assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel1234HTML);
-        done();
-    });
+	it('Parses correctly with multiple levels', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [1, 2, 3, 4]
+		});
+		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel1234HTML);
+		done();
+	});
 
-    it('Parses correctly with subset of multiple levels', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [2, 3]
-        });
-        assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel23HTML);
-        done();
-    });
+	it('Parses correctly with subset of multiple levels', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [2, 3]
+		});
+		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel23HTML);
+		done();
+	});
 
-    it('Can manage headlines in a strange order', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [1, 2, 3]
-        });
-        assert.equal(adjustEOL(md.render(strangeOrderMarkdown)), strangeOrderHTML);
-        done();
-    });
+	it('Can manage headlines in a strange order', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [1, 2, 3]
+		});
+		assert.equal(adjustEOL(md.render(strangeOrderMarkdown)), strangeOrderHTML);
+		done();
+	});
 
-    it('Parses correctly with custom heading id attrs', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [1, 2, 3, 4]
-        });
-        md.use(markdownItAttrs);
-        assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsHTML);
-        done();
-    });
+	it('Parses correctly with custom heading id attrs', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [1, 2, 3, 4]
+		});
+		md.use(markdownItAttrs);
+		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsHTML);
+		done();
+	});
 
-    it('Parses correctly when combining markdown-it-attrs and markdown-it-anchor', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [1, 2, 3, 4]
-        });
-        md.use(markdownItAttrs);
-        assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsWithAnchorsHTML);
-        done();
-    });
+	it('Parses correctly when combining markdown-it-attrs and markdown-it-anchor', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [1, 2, 3, 4]
+		});
+		md.use(markdownItAttrs);
+		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsWithAnchorsHTML);
+		done();
+	});
 
-    it('Full example', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            'includeLevel': [2, 3, 4]
-        });
-        md.use(markdownItAttrs);
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleHTML);
-        done();
-    });
+	it('Full example', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			'includeLevel': [2, 3, 4]
+		});
+		md.use(markdownItAttrs);
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleHTML);
+		done();
+	});
 
-    it('Full example with a custom container', (done) => {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            includeLevel: [2, 3, 4],
-            transformContainerOpen: () => {
-                return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
-            },
-            transformContainerClose: () => {
-                return '</nav>';
-            }
-        });
-        md.use(markdownItAttrs);
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
-        done();
-    });
+	it('Full example with a custom container', (done) => {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			includeLevel: [2, 3, 4],
+			transformContainerOpen: () => {
+				return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
+			},
+			transformContainerClose: () => {
+				return '</nav>';
+			}
+		});
+		md.use(markdownItAttrs);
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
+		done();
+	});
 
-    it('Lets you emulate the old behavior', (done) => {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            includeLevel: [2, 3, 4],
-            transformContainerOpen: () => {
-                return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
-            },
-            transformContainerClose: () => {
-                return '</nav>';
-            }
-        });
-        md.use(markdownItAttrs);
-        md.use(markdownItAnchor, markdownItAnchorOpts);
-        assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
-        done();
-    });
+	it('Lets you emulate the old behavior', (done) => {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			includeLevel: [2, 3, 4],
+			transformContainerOpen: () => {
+				return '<nav class="my-toc"><button>Toggle</button><h3>Table of Contents</h3>';
+			},
+			transformContainerClose: () => {
+				return '</nav>';
+			}
+		});
+		md.use(markdownItAttrs);
+		md.use(markdownItAnchor, markdownItAnchorOpts);
+		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
+		done();
+	});
 
-    it('lets you emulate old behavior', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            transformContainerOpen: () => {
-                return '<p><div class="table-of-contents">';
-            },
-            transformContainerClose: () => {
-                return '</div></p>';
-            }
-        });
-        assert.equal(adjustEOL(md.render(basicMarkdown)), basicHTML);
-        done();
-    });
+	it('lets you emulate old behavior', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			transformContainerOpen: () => {
+				return '<p><div class="table-of-contents">';
+			},
+			transformContainerClose: () => {
+				return '</div></p>';
+			}
+		});
+		assert.equal(adjustEOL(md.render(basicMarkdown)), basicHTML);
+		done();
+	});
 
-    it('getTokensText', function (done) {
-        const md = new MarkdownIt();
-        md.use(markdownItTOC, {
-            getTokensText: tokens => tokens.filter(t => ['text', 'image'].includes(t.type)).map(t => t.content).join('')
-        });
-        assert.equal(
-            md.render('# H1 ![image](link) `code` _em_' + '\n' + '[[toc]]'),
-            '<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
-            '<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
-        );
-        done();
-    });
+	it('getTokensText', function (done) {
+		const md = new MarkdownIt();
+		md.use(markdownItTOC, {
+			getTokensText: tokens => tokens.filter(t => ['text', 'image'].includes(t.type)).map(t => t.content).join('')
+		});
+		assert.equal(
+			md.render('# H1 ![image](link) `code` _em_' + '\n' + '[[toc]]'),
+			'<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
+			'<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
+		);
+		done();
+	});
 
 	it('Omits headlines', function (done) {
-        const md = new MarkdownIt({ html: true });
-        md.use(markdownItTOC, { omitTag: '<!-- omit from toc -->'});
-        assert.equal(adjustEOL(md.render(omitMarkdown)), omitHTML);
-        done();
-    });
+		const md = new MarkdownIt({ html: true });
+		md.use(markdownItTOC, { omitTag: '<!-- omit from toc -->' });
+		assert.equal(adjustEOL(md.render(omitMarkdown)), omitHTML);
+		done();
+	});
 });

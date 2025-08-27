@@ -11,41 +11,41 @@
 */
 
 const slugify = function (s) {
-    return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
+	return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 };
 
 const transformContainerOpen = function (containerClass, containerHeaderHtml) {
-    let tocOpenHtml = '<div class="' + containerClass + '">';
-    if (containerHeaderHtml) {
-        tocOpenHtml += containerHeaderHtml;
-    }
-    return tocOpenHtml;
+	let tocOpenHtml = '<div class="' + containerClass + '">';
+	if (containerHeaderHtml) {
+		tocOpenHtml += containerHeaderHtml;
+	}
+	return tocOpenHtml;
 };
 
 const transformContainerClose = function (containerFooterHtml) {
-    let tocFooterHtml = '';
-    if (containerFooterHtml) {
-        tocFooterHtml = containerFooterHtml;
-    }
-    return tocFooterHtml + '</div>';
+	let tocFooterHtml = '';
+	if (containerFooterHtml) {
+		tocFooterHtml = containerFooterHtml;
+	}
+	return tocFooterHtml + '</div>';
 };
 
 const defaultOptions = {
-    includeLevel: [1, 2],
-    containerClass: 'table-of-contents',
-    slugify: slugify,
-    markerPattern: /^\[\[toc\]\]/im,
+	includeLevel: [1, 2],
+	containerClass: 'table-of-contents',
+	slugify: slugify,
+	markerPattern: /^\[\[toc\]\]/im,
 	omitTag: '<!-- omit from toc -->',
-    listType: 'ul',
-    format: function (content, md) {
-        return md.renderInline(content);
-    },
-    containerHeaderHtml: undefined,
-    containerFooterHtml: undefined,
-    transformLink: undefined,
-    transformContainerOpen: transformContainerOpen,
-    transformContainerClose: transformContainerClose,
-    getTokensText: getTokensText
+	listType: 'ul',
+	format: function (content, md) {
+		return md.renderInline(content);
+	},
+	containerHeaderHtml: undefined,
+	containerFooterHtml: undefined,
+	transformLink: undefined,
+	transformContainerOpen: transformContainerOpen,
+	transformContainerClose: transformContainerClose,
+	getTokensText: getTokensText
 };
 
 /**
@@ -69,10 +69,10 @@ const defaultOptions = {
  * @returns {string}
  */
 function getTokensText(tokens) {
-    return tokens
-      .filter(t => ['text', 'code_inline'].includes(t.type))
-      .map(t => t.content)
-      .join('');
+	return tokens
+		.filter(t => ['text', 'code_inline'].includes(t.type))
+		.map(t => t.content)
+		.join('');
 }
 
 /**
@@ -83,41 +83,41 @@ function getTokensText(tokens) {
 * @returns {Array<HeadlineItem>}
 */
 function findHeadlineElements(levels, tokens, options) {
-    const headings = [];
-    let currentHeading = null;
+	const headings = [];
+	let currentHeading = null;
 
-    tokens.forEach((token, index) => {
-        if (token.type === 'heading_open') {
-            const prev = index > 0 ? tokens[index-1] : null;
+	tokens.forEach((token, index) => {
+		if (token.type === 'heading_open') {
+			const prev = index > 0 ? tokens[index - 1] : null;
 			if (prev && prev.type === 'html_block' && prev.content.trim().toLowerCase().replace('\n', '') === options.omitTag) {
 				return;
 			}
 			const id = findExistingIdAttr(token);
-            const level = parseInt(token.tag.toLowerCase().replace('h', ''), 10);
-            if (levels.indexOf(level) >= 0) {
-                currentHeading = {
-                    level: level,
-                    text: null,
-                    anchor: id || null
-                };
-            }
-        }
-        else if (currentHeading && token.type === 'inline') {
-            const textContent = options.getTokensText(token.children);
-            currentHeading.text = textContent;
-            if (!currentHeading.anchor) {
-                currentHeading.anchor = options.slugify(textContent, token.content);
-            }
-        }
-        else if (token.type === 'heading_close') {
-            if (currentHeading) {
-                headings.push(currentHeading);
-            }
-            currentHeading = null;
-        }
-    });
+			const level = parseInt(token.tag.toLowerCase().replace('h', ''), 10);
+			if (levels.indexOf(level) >= 0) {
+				currentHeading = {
+					level: level,
+					text: null,
+					anchor: id || null
+				};
+			}
+		}
+		else if (currentHeading && token.type === 'inline') {
+			const textContent = options.getTokensText(token.children);
+			currentHeading.text = textContent;
+			if (!currentHeading.anchor) {
+				currentHeading.anchor = options.slugify(textContent, token.content);
+			}
+		}
+		else if (token.type === 'heading_close') {
+			if (currentHeading) {
+				headings.push(currentHeading);
+			}
+			currentHeading = null;
+		}
+	});
 
-    return headings;
+	return headings;
 }
 
 /**
@@ -127,19 +127,19 @@ function findHeadlineElements(levels, tokens, options) {
 * @returns {string | null} Id attribute to use as anchor
 */
 function findExistingIdAttr(token) {
-    if (token && token.attrs && token.attrs.length > 0) {
-        const idAttr = token.attrs.find((attr) => {
-            if (Array.isArray(attr) && attr.length >= 2) {
-                return attr[0] === 'id';
-            }
-            return false;
-        });
-        if (idAttr && Array.isArray(idAttr) && idAttr.length >= 2) {
-            const [key, val] = idAttr;
-            return val;
-        }
-    }
-    return null;
+	if (token && token.attrs && token.attrs.length > 0) {
+		const idAttr = token.attrs.find((attr) => {
+			if (Array.isArray(attr) && attr.length >= 2) {
+				return attr[0] === 'id';
+			}
+			return false;
+		});
+		if (idAttr && Array.isArray(idAttr) && idAttr.length >= 2) {
+			const [key, val] = idAttr;
+			return val;
+		}
+	}
+	return null;
 }
 
 /**
@@ -148,7 +148,7 @@ function findExistingIdAttr(token) {
 * @returns {number} Minimum level
 */
 function getMinLevel(headlineItems) {
-    return Math.min(...headlineItems.map(item => item.level));
+	return Math.min(...headlineItems.map(item => item.level));
 }
 
 /**
@@ -160,9 +160,9 @@ function getMinLevel(headlineItems) {
 * @returns {TocItem}
 */
 function addListItem(level, text, anchor, rootNode) {
-    const listItem = { level, text, anchor, children: [], parent: rootNode };
-    rootNode.children.push(listItem);
-    return listItem;
+	const listItem = { level, text, anchor, children: [], parent: rootNode };
+	rootNode.children.push(listItem);
+	return listItem;
 }
 
 /**
@@ -171,38 +171,38 @@ function addListItem(level, text, anchor, rootNode) {
 * @returns {TocItem} Tree of TOC items
 */
 function flatHeadlineItemsToNestedTree(headlineItems) {
-    // create a root node with no text that holds the entire TOC. this won't be rendered, but only its children
-    const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: null, children: [], parent: null };
-    // pointer that tracks the last root item of the current list
-    let currentRootNode = toc;
-    // pointer that tracks the last item (to turn it into a new root node if necessary)
-    let prevListItem = currentRootNode;
+	// create a root node with no text that holds the entire TOC. this won't be rendered, but only its children
+	const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: null, children: [], parent: null };
+	// pointer that tracks the last root item of the current list
+	let currentRootNode = toc;
+	// pointer that tracks the last item (to turn it into a new root node if necessary)
+	let prevListItem = currentRootNode;
 
-    headlineItems.forEach(headlineItem => {
-        // if level is bigger, take the previous node, add a child list, set current list to this new child list
-        if (headlineItem.level > prevListItem.level) {
-            // eslint-disable-next-line no-unused-vars
-            Array.from({ length: headlineItem.level - prevListItem.level }).forEach(_ => {
-                currentRootNode = prevListItem;
-                prevListItem = addListItem(headlineItem.level, null, null, currentRootNode);
-            });
-            prevListItem.text = headlineItem.text;
-            prevListItem.anchor = headlineItem.anchor;
-        }
-        // if level is same, add to the current list
-        else if (headlineItem.level === prevListItem.level) {
-            prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
-        }
-        // if level is smaller, set current list to currentlist.parent
-        else if (headlineItem.level < prevListItem.level) {
-            for (let i = 0; i < prevListItem.level - headlineItem.level; i++) {
-                currentRootNode = currentRootNode.parent;
-            }
-            prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
-        }
-    });
+	headlineItems.forEach(headlineItem => {
+		// if level is bigger, take the previous node, add a child list, set current list to this new child list
+		if (headlineItem.level > prevListItem.level) {
+			// eslint-disable-next-line no-unused-vars
+			Array.from({ length: headlineItem.level - prevListItem.level }).forEach(_ => {
+				currentRootNode = prevListItem;
+				prevListItem = addListItem(headlineItem.level, null, null, currentRootNode);
+			});
+			prevListItem.text = headlineItem.text;
+			prevListItem.anchor = headlineItem.anchor;
+		}
+		// if level is same, add to the current list
+		else if (headlineItem.level === prevListItem.level) {
+			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
+		}
+		// if level is smaller, set current list to currentlist.parent
+		else if (headlineItem.level < prevListItem.level) {
+			for (let i = 0; i < prevListItem.level - headlineItem.level; i++) {
+				currentRootNode = currentRootNode.parent;
+			}
+			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
+		}
+	});
 
-    return toc;
+	return toc;
 }
 
 /**
@@ -211,81 +211,81 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 * @returns {string}
 */
 function tocItemToHtml(tocItem, options, md) {
-    return '<' + options.listType + '>' + tocItem.children.map(childItem => {
-        let li = '<li>';
-        let anchor = childItem.anchor;
-        if (options && options.transformLink) {
-            anchor = options.transformLink(anchor);
-        }
+	return '<' + options.listType + '>' + tocItem.children.map(childItem => {
+		let li = '<li>';
+		let anchor = childItem.anchor;
+		if (options && options.transformLink) {
+			anchor = options.transformLink(anchor);
+		}
 
-        let text = childItem.text ? options.format(childItem.text, md, anchor) : null;
+		let text = childItem.text ? options.format(childItem.text, md, anchor) : null;
 
-        li += anchor ? `<a href="#${anchor}">${text}</a>` : (text || '');
+		li += anchor ? `<a href="#${anchor}">${text}</a>` : (text || '');
 
-        return li + (childItem.children.length > 0 ? tocItemToHtml(childItem, options, md) : '') + '</li>';
-    }).join('') + '</' + options.listType + '>';
+		return li + (childItem.children.length > 0 ? tocItemToHtml(childItem, options, md) : '') + '</li>';
+	}).join('') + '</' + options.listType + '>';
 }
 
 module.exports = function (md, opts) {
-    const options = Object.assign({}, defaultOptions, opts);
-    const tocRegexp = options.markerPattern;
+	const options = Object.assign({}, defaultOptions, opts);
+	const tocRegexp = options.markerPattern;
 
-    function toc(state, startLine, endLine, silent) {
-        let token;
-        let match;
-        const start = state.bMarks[startLine] + state.tShift[startLine];
-        const max = state.eMarks[startLine];
+	function toc(state, startLine, endLine, silent) {
+		let token;
+		let match;
+		const start = state.bMarks[startLine] + state.tShift[startLine];
+		const max = state.eMarks[startLine];
 
-        // Reject if the token does not start with [
-        if (state.src.charCodeAt(start) !== 0x5B /* [ */) {
-            return false;
-        }
+		// Reject if the token does not start with [
+		if (state.src.charCodeAt(start) !== 0x5B /* [ */) {
+			return false;
+		}
 
-        // Detect [[toc]] markup
-        match = tocRegexp.exec(state.src.substring(start, max));
-        match = !match ? [] : match.filter(function (m) { return m; });
-        if (match.length < 1) {
-            return false;
-        }
+		// Detect [[toc]] markup
+		match = tocRegexp.exec(state.src.substring(start, max));
+		match = !match ? [] : match.filter(function (m) { return m; });
+		if (match.length < 1) {
+			return false;
+		}
 
-        if (silent) {
-            return true;
-        }
+		if (silent) {
+			return true;
+		}
 
-        state.line = startLine + 1
+		state.line = startLine + 1
 
-        // Build content
-        token = state.push('toc_open', 'toc', 1);
-        token.markup = '[[toc]]';
-        token.map = [startLine, state.line];
+		// Build content
+		token = state.push('toc_open', 'toc', 1);
+		token.markup = '[[toc]]';
+		token.map = [startLine, state.line];
 
-        token = state.push('toc_body', '', 0);
-        token.markup = ''
-        token.map = [startLine, state.line];
-        token.children = [];
+		token = state.push('toc_body', '', 0);
+		token.markup = ''
+		token.map = [startLine, state.line];
+		token.children = [];
 
-        token = state.push('toc_close', 'toc', -1);
-        token.markup = '';
+		token = state.push('toc_close', 'toc', -1);
+		token.markup = '';
 
-        return true;
-    }
+		return true;
+	}
 
-    md.renderer.rules.toc_open = function (tokens, index) {
-        return options.transformContainerOpen(options.containerClass, options.containerHeaderHtml);
-    };
+	md.renderer.rules.toc_open = function (tokens, index) {
+		return options.transformContainerOpen(options.containerClass, options.containerHeaderHtml);
+	};
 
-    md.renderer.rules.toc_close = function (tokens, index) {
-        return options.transformContainerClose(options.containerFooterHtml) + '\n';
-    };
+	md.renderer.rules.toc_close = function (tokens, index) {
+		return options.transformContainerClose(options.containerFooterHtml) + '\n';
+	};
 
-    md.renderer.rules.toc_body = function (tokens, index) {
-        const headlineItems = findHeadlineElements(options.includeLevel, tokens, options);
-        const tocTree = flatHeadlineItemsToNestedTree(headlineItems);
-        const html = tocItemToHtml(tocTree, options, md);
-        return html;
-    };
+	md.renderer.rules.toc_body = function (tokens, index) {
+		const headlineItems = findHeadlineElements(options.includeLevel, tokens, options);
+		const tocTree = flatHeadlineItemsToNestedTree(headlineItems);
+		const html = tocItemToHtml(tocTree, options, md);
+		return html;
+	};
 
-    md.block.ruler.before('heading', 'toc', toc, {
-        alt: ['paragraph', 'reference', 'blockquote']
-    });
+	md.block.ruler.before('heading', 'toc', toc, {
+		alt: ['paragraph', 'reference', 'blockquote']
+	});
 };
