@@ -1,13 +1,17 @@
 {
 	"license": "MIT",
-	"version": "0.9.0",
+	"version": "1.0.0",
 	"name": "markdown-it-table-of-contents",
 	"main": "index.js",
-	"scripts": {
-		"test": "mocha test --recursive"
+	"module": "index.mjs",
+	"exports": {
+		".": {
+			"import": "./index.mjs",
+			"require": "./index.js"
+		}
 	},
-	"engines": {
-		"node": ">6.4.0"
+	"scripts": {
+		"test": "node --test test/modules/test.js"
 	},
 	"description": "A Markdown-it plugin for adding a table of contents to markdown documents",
 	"homepage": "https://github.com/cmaas/markdown-it-table-of-contents",
@@ -33,7 +37,6 @@
 	"devDependencies": {
 		"markdown-it": "~14.1.0",
 		"markdown-it-anchor": "~9.2.0",
-		"markdown-it-attrs": "^4.3.1",
-		"mocha": "~11.0.1"
+		"markdown-it-attrs": "^4.3.1"
 	}
 }

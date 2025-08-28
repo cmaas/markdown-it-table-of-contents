@@ -3,12 +3,23 @@ A table of contents plugin for Markdown-it. Simple, customizable and with a defa
 
 ## Usage
 
+CommonJS:
+
 ``` javascript
 var MarkdownIt = require("markdown-it");
 var md = new MarkdownIt();
 
 md.use(require("markdown-it-anchor").default); // Optional, but makes sense as you really want to link to something, see info about recommended plugins below
 md.use(require("markdown-it-table-of-contents"));
+```
+
+ESM:
+```javascript
+import MarkdownIt from 'markdown-it';
+import MarkdownItTOC from 'markdown-it-table-of-contents';
+
+const md = new MarkdownIt();
+md.use(MarkdownItTOC);
 ```
 
 Then add `[[toc]]` where you want the table of contents to be added in your document.

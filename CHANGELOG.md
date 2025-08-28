@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2025-08-28
+
+* Runs stable for years now, hence push version to 1.0. No breaking changes to v0.9.0.
+* **Added:** Now also works as ESM module
+* **Removed (dev):** (Internal) mocha replaced with node test runner for running tests
+
+***
 
 ## [0.9.0] - 2025-01-21
 
-* **Added:** Headlines can now be omitted from the table of contents by placing a special HTML comment tag before the headline (fixes #65).
+* **Added:** Headlines can now be omitted from the table of contents by placing a special HTML comment tag before the headline (fixes #65)
 * **Added:** Option `omitTag` can override the default tag `<!-- omit from toc -->`
 
 ***

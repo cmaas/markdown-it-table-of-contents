@@ -1,5 +1,4 @@
 //@ts-check
-'use strict';
 
 /*
 * markdown-it-table-of-contents
@@ -290,4 +289,4 @@ const markdownItTableOfContents = function (md, opts) {
 	});
 };
 
-module.exports = markdownItTableOfContents;
+export default markdownItTableOfContents;
