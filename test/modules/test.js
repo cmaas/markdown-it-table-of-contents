@@ -1,13 +1,15 @@
 //@ts-check
-'use strict';
 
-const assert = require('assert');
-const fs = require('fs');
-const MarkdownIt = require('markdown-it');
-const markdownItAnchor = require('markdown-it-anchor');
+import assert from 'node:assert';
+import test, { describe } from 'node:test';
+import fs from 'node:fs';
+import os from 'node:os';
+import markdownIt from 'markdown-it';
+import markdownItAnchor from 'markdown-it-anchor';
+import markdownItAttrs from 'markdown-it-attrs';
+import markdownItTOC from '../../index.mjs';
+
 const markdownItAnchorOpts = { tabIndex: false, uniqueSlugStartIndex: 2 };
-const markdownItAttrs = require('markdown-it-attrs');
-const markdownItTOC = require('../../index.js');
 
 // Defaults
 const defaultContainerClass = 'table-of-contents';
@@ -56,8 +58,7 @@ const omitHTML = fs.readFileSync('test/fixtures/omit.html', 'utf-8');
 
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
-
-const endOfLine = require('os').EOL;
+const endOfLine = os.EOL;
 
 function adjustEOL(text) {
 	if ('\n' !== endOfLine) {
@@ -66,109 +67,98 @@ function adjustEOL(text) {
 	return text;
 }
 
-describe('Testing Markdown rendering', function () {
-	it('Parses correctly with default settings', function (done) {
-		const md = new MarkdownIt();
+describe('Testing Markdown rendering', () => {
+	test('Parses correctly with default settings', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC);
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML);
-		done();
 	});
 
-	it('Parses correctly with includeLevel set', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with includeLevel set', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [2]
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simple1LevelHTML);
-		done();
 	});
 
-	it('Parses correctly with containerClass set', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with containerClass set', () => {
+		const md = new markdownIt();
 		const customContainerClass = 'custom-container-class';
 		md.use(markdownItTOC, {
 			'containerClass': customContainerClass
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
-		done();
 	});
 
-	it('Parses correctly with markerPattern set', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with markerPattern set', () => {
+		const md = new markdownIt();
 		const customMarker = '[[custom-marker]]';
 		md.use(markdownItTOC, {
 			'markerPattern': /^\[\[custom-marker\]\]/im
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
-		done();
 	});
 
-	it('Parses correctly with listType set', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with listType set', () => {
+		const md = new markdownIt();
 		const customListType = 'ol';
 		md.use(markdownItTOC, {
 			'listType': customListType
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(new RegExp(defaultListType, 'g'), customListType));
-		done();
 	});
 
-	it('Formats markdown by default', function (done) {
-		const md = new MarkdownIt();
+	test('Formats markdown by default', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC);
 		assert.equal(adjustEOL(md.render(simpleWithFormatting)), simpleWithFormattingHTML);
-		done();
 	});
 
-	it('Parses correctly with custom formatting', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with custom formatting', () => {
+		const md = new markdownIt();
 		const customHeading = 'Heading with custom formatting 123abc';
 		md.use(markdownItTOC, {
 			format: function (str) { return customHeading; }
 		});
 		assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
-		done();
 	});
 
-	it('Custom formatting includes markdown and link', function (done) {
-		const md = new MarkdownIt();
+	test('Custom formatting includes markdown and link', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			format: function (str, md, link) {
-				assert.ok(MarkdownIt.prototype.isPrototypeOf(md));
+				assert.ok(markdownIt.prototype.isPrototypeOf(md));
 				assert.notEqual(link, null);
 				return 'customHeading';
 			}
 		});
 		assert.equal(md.render(simpleMarkdown).includes('customHeading'), true);
-		done();
 	});
 
-	it('Slugs match markdown-it-anchor', function (done) {
-		const md = new MarkdownIt();
+	test('Slugs match markdown-it-anchor', () => {
+		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		md.use(markdownItTOC);
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithAnchorsHTML);
-		done();
 	});
 
-	it('Slugs match markdown-it-anchor with special chars', function (done) {
-		const md = new MarkdownIt();
+	test('Slugs match markdown-it-anchor with special chars', () => {
+		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		md.use(markdownItTOC);
 		assert.equal(adjustEOL(md.render(anchorsSpecialCharsMarkdown)), anchorsSpecialCharsHTML);
-		done();
 	});
 
-	it('Generates empty TOC', function (done) {
-		const md = new MarkdownIt();
+	test('Generates empty TOC', () => {
+		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		md.use(markdownItTOC);
 		assert.equal(adjustEOL(md.render(emptyMarkdown)), emptyMarkdownHtml);
-		done();
 	});
 
-	it('Parses correctly with container header and footer html set', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with container header and footer html set', () => {
+		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		md.use(markdownItTOC,
 			{
@@ -177,11 +167,10 @@ describe('Testing Markdown rendering', function () {
 				containerFooterHtml: '<div class="footer">Footer</div>',
 			});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithHeaderFooterHTML);
-		done();
 	});
 
-	it('Generates TOC, with custom transformed link', function (done) {
-		const md = new MarkdownIt();
+	test('Generates TOC, with custom transformed link', () => {
+		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		md.use(markdownItTOC,
 			{
@@ -191,87 +180,78 @@ describe('Testing Markdown rendering', function () {
 				},
 			});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithTransformLink);
-		done();
 	});
 
-	it('Parses correctly when headers are links', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly when headers are links', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC);
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(simpleWithHeadingLink)), simpleWithHeadingLinkHTML);
-		done();
 	});
 
-	it('Parses correctly with duplicate headers', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with duplicate headers', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [1, 2, 3, 4]
 		});
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(simpleWithDuplicateHeadings)), simpleWithDuplicateHeadingsHTML);
-		done();
 	});
 
-	it('Parses correctly with multiple levels', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with multiple levels', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [1, 2, 3, 4]
 		});
 		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel1234HTML);
-		done();
 	});
 
-	it('Parses correctly with subset of multiple levels', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with subset of multiple levels', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [2, 3]
 		});
 		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel23HTML);
-		done();
 	});
 
-	it('Can manage headlines in a strange order', function (done) {
-		const md = new MarkdownIt();
+	test('Can manage headlines in a strange order', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [1, 2, 3]
 		});
 		assert.equal(adjustEOL(md.render(strangeOrderMarkdown)), strangeOrderHTML);
-		done();
 	});
 
-	it('Parses correctly with custom heading id attrs', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly with custom heading id attrs', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [1, 2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsHTML);
-		done();
 	});
 
-	it('Parses correctly when combining markdown-it-attrs and markdown-it-anchor', function (done) {
-		const md = new MarkdownIt();
+	test('Parses correctly when combining markdown-it-attrs and markdown-it-anchor', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [1, 2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsWithAnchorsHTML);
-		done();
 	});
 
-	it('Full example', function (done) {
-		const md = new MarkdownIt();
+	test('Full example', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			'includeLevel': [2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleHTML);
-		done();
 	});
 
-	it('Full example with a custom container', (done) => {
-		const md = new MarkdownIt();
+	test('Full example with a custom container', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			includeLevel: [2, 3, 4],
 			transformContainerOpen: () => {
@@ -284,11 +264,10 @@ describe('Testing Markdown rendering', function () {
 		md.use(markdownItAttrs);
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
-		done();
 	});
 
-	it('Lets you emulate the old behavior', (done) => {
-		const md = new MarkdownIt();
+	test('Lets you emulate the old behavior', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			includeLevel: [2, 3, 4],
 			transformContainerOpen: () => {
@@ -301,11 +280,10 @@ describe('Testing Markdown rendering', function () {
 		md.use(markdownItAttrs);
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(fullExampleMarkdown)), fullExampleCustomContainerHTML);
-		done();
 	});
 
-	it('lets you emulate old behavior', function (done) {
-		const md = new MarkdownIt();
+	test('lets you emulate old behavior', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			transformContainerOpen: () => {
 				return '<p><div class="table-of-contents">';
@@ -315,11 +293,10 @@ describe('Testing Markdown rendering', function () {
 			}
 		});
 		assert.equal(adjustEOL(md.render(basicMarkdown)), basicHTML);
-		done();
 	});
 
-	it('getTokensText', function (done) {
-		const md = new MarkdownIt();
+	test('getTokensText', () => {
+		const md = new markdownIt();
 		md.use(markdownItTOC, {
 			getTokensText: tokens => tokens.filter(t => ['text', 'image'].includes(t.type)).map(t => t.content).join('')
 		});
@@ -328,13 +305,11 @@ describe('Testing Markdown rendering', function () {
 			'<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
 			'<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
 		);
-		done();
 	});
 
-	it('Omits headlines', function (done) {
-		const md = new MarkdownIt({ html: true });
+	test('Omits headlines', () => {
+		const md = new markdownIt({ html: true });
 		md.use(markdownItTOC, { omitTag: '<!-- omit from toc -->' });
 		assert.equal(adjustEOL(md.render(omitMarkdown)), omitHTML);
-		done();
 	});
 });
