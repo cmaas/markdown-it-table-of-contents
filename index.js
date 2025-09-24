@@ -10,11 +10,11 @@
 * Step 3: Turn the nested tree into HTML code.
 */
 
-const slugify = function (s) {
+const slugify = function (/** @type {any} */ s) {
 	return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 };
 
-const transformContainerOpen = function (containerClass, containerHeaderHtml) {
+const transformContainerOpen = function (/** @type {string} */ containerClass, /** @type {string} */ containerHeaderHtml) {
 	let tocOpenHtml = '<div class="' + containerClass + '">';
 	if (containerHeaderHtml) {
 		tocOpenHtml += containerHeaderHtml;
@@ -22,7 +22,7 @@ const transformContainerOpen = function (containerClass, containerHeaderHtml) {
 	return tocOpenHtml;
 };
 
-const transformContainerClose = function (containerFooterHtml) {
+const transformContainerClose = function (/** @type {string} */ containerFooterHtml) {
 	let tocFooterHtml = '';
 	if (containerFooterHtml) {
 		tocFooterHtml = containerFooterHtml;
@@ -37,7 +37,7 @@ const defaultOptions = {
 	markerPattern: /^\[\[toc\]\]/im,
 	omitTag: '<!-- omit from toc -->',
 	listType: 'ul',
-	format: function (content, md) {
+	format: function (/** @type {any} */ content, /** @type {any} */ md) {
 		return md.renderInline(content);
 	},
 	containerHeaderHtml: undefined,
@@ -51,7 +51,7 @@ const defaultOptions = {
 /**
 * @typedef {Object} HeadlineItem
 * @property {number} level Headline level
-* @property {string} anchor Anchor target
+* @property {string | null} anchor Anchor target
 * @property {string} text Text of headline
 */
 
@@ -59,20 +59,22 @@ const defaultOptions = {
 * @typedef {Object} TocItem
 * @property {number} level Item level
 * @property {string} text Text of link
-* @property {string} anchor Target of link
+* @property {string | null} anchor Target of link
 * @property {Array<TocItem>} children Sub-items for this list item
-* @property {TocItem} parent Parent this item belongs to
+* @property {TocItem | null} parent Parent this item belongs to
 */
 
 /**
  * Helper to extract text from tokens, same function as in markdown-it-anchor
+ * @param {Array<any>} tokens Tokens
  * @returns {string}
  */
 function getTokensText(tokens) {
 	return tokens
 		.filter(t => ['text', 'code_inline'].includes(t.type))
 		.map(t => t.content)
-		.join('');
+		.join('')
+		.trim();
 }
 
 /**
@@ -83,10 +85,16 @@ function getTokensText(tokens) {
 * @returns {Array<HeadlineItem>}
 */
 function findHeadlineElements(levels, tokens, options) {
+	/**
+	 * @type {HeadlineItem[]}
+	 */
 	const headings = [];
+	/**
+	 * @type {HeadlineItem | null}
+	 */
 	let currentHeading = null;
 
-	tokens.forEach((token, index) => {
+	tokens.forEach((/** @type {*} */ token, /** @type {number} */ index) => {
 		if (token.type === 'heading_open') {
 			const prev = index > 0 ? tokens[index - 1] : null;
 			if (prev && prev.type === 'html_block' && prev.content.trim().toLowerCase().replace('\n', '') === options.omitTag) {
@@ -97,7 +105,7 @@ function findHeadlineElements(levels, tokens, options) {
 			if (levels.indexOf(level) >= 0) {
 				currentHeading = {
 					level: level,
-					text: null,
+					text: '',
 					anchor: id || null
 				};
 			}
@@ -128,14 +136,14 @@ function findHeadlineElements(levels, tokens, options) {
 */
 function findExistingIdAttr(token) {
 	if (token && token.attrs && token.attrs.length > 0) {
-		const idAttr = token.attrs.find((attr) => {
+		const idAttr = token.attrs.find((/** @type {string | any[]} */ attr) => {
 			if (Array.isArray(attr) && attr.length >= 2) {
 				return attr[0] === 'id';
 			}
 			return false;
 		});
 		if (idAttr && Array.isArray(idAttr) && idAttr.length >= 2) {
-			const [key, val] = idAttr;
+			const [_, val] = idAttr;
 			return val;
 		}
 	}
@@ -155,7 +163,7 @@ function getMinLevel(headlineItems) {
 * Helper that creates a TOCItem
 * @param {number} level
 * @param {string} text
-* @param {string} anchor
+* @param {string | null} anchor
 * @param {TocItem} rootNode
 * @returns {TocItem}
 */
@@ -172,7 +180,8 @@ function addListItem(level, text, anchor, rootNode) {
 */
 function flatHeadlineItemsToNestedTree(headlineItems) {
 	// create a root node with no text that holds the entire TOC. this won't be rendered, but only its children
-	const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: null, children: [], parent: null };
+	/** @type {TocItem} */
+	const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: '', children: [], parent: null };
 	// pointer that tracks the last root item of the current list
 	let currentRootNode = toc;
 	// pointer that tracks the last item (to turn it into a new root node if necessary)
@@ -184,7 +193,7 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 			// eslint-disable-next-line no-unused-vars
 			Array.from({ length: headlineItem.level - prevListItem.level }).forEach(_ => {
 				currentRootNode = prevListItem;
-				prevListItem = addListItem(headlineItem.level, null, null, currentRootNode);
+				prevListItem = addListItem(headlineItem.level, '', null, currentRootNode);
 			});
 			prevListItem.text = headlineItem.text;
 			prevListItem.anchor = headlineItem.anchor;
@@ -196,7 +205,9 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 		// if level is smaller, set current list to currentlist.parent
 		else if (headlineItem.level < prevListItem.level) {
 			for (let i = 0; i < prevListItem.level - headlineItem.level; i++) {
-				currentRootNode = currentRootNode.parent;
+				if (currentRootNode.parent) {
+					currentRootNode = currentRootNode.parent;
+				}
 			}
 			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
 		}
@@ -206,10 +217,12 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 }
 
 /**
-* Recursively turns a nested tree of tocItems to HTML.
-* @param {TocItem} tocItem
-* @returns {string}
-*/
+ * Recursively turns a nested tree of tocItems to HTML.
+ * @param {TocItem} tocItem
+ * @param {any} options
+ * @param {any} md
+ * @returns {string}
+ */
 function tocItemToHtml(tocItem, options, md) {
 	return '<' + options.listType + '>' + tocItem.children.map(childItem => {
 		let li = '<li>';
@@ -226,10 +239,18 @@ function tocItemToHtml(tocItem, options, md) {
 	}).join('') + '</' + options.listType + '>';
 }
 
-const markdownItTableOfContents = function (md, opts) {
+const markdownItTableOfContents = function (/** @type {any} */ md, /** @type {any} */ opts) {
 	const options = Object.assign({}, defaultOptions, opts);
 	const tocRegexp = options.markerPattern;
 
+	/**
+	 * Markdown-it block rule to find [[toc]] markers
+	 * @param {*} state
+	 * @param {*} startLine
+	 * @param {*} endLine
+	 * @param {*} silent
+	 * @returns {boolean}
+	 */
 	function toc(state, startLine, endLine, silent) {
 		let token;
 		let match;
@@ -243,7 +264,7 @@ const markdownItTableOfContents = function (md, opts) {
 
 		// Detect [[toc]] markup
 		match = tocRegexp.exec(state.src.substring(start, max));
-		match = !match ? [] : match.filter(function (m) { return m; });
+		match = !match ? [] : match.filter(function (/** @type {any} */ m) { return m; });
 		if (match.length < 1) {
 			return false;
 		}
@@ -270,15 +291,16 @@ const markdownItTableOfContents = function (md, opts) {
 		return true;
 	}
 
-	md.renderer.rules.toc_open = function (tokens, index) {
+	md.renderer.rules.toc_open = function () {
 		return options.transformContainerOpen(options.containerClass, options.containerHeaderHtml);
 	};
 
-	md.renderer.rules.toc_close = function (tokens, index) {
+	md.renderer.rules.toc_close = function () {
 		return options.transformContainerClose(options.containerFooterHtml) + '\n';
 	};
 
-	md.renderer.rules.toc_body = function (tokens, index) {
+	md.renderer.rules.toc_body = function (/** @type {any} */ tokens) {
+		console.log('TOKENS', tokens);
 		const headlineItems = findHeadlineElements(options.includeLevel, tokens, options);
 		const tocTree = flatHeadlineItemsToNestedTree(headlineItems);
 		const html = tocItemToHtml(tocTree, options, md);

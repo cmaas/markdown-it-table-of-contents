@@ -55,11 +55,13 @@ const anchorsSpecialCharsHTML = fs.readFileSync('test/fixtures/anchors-special-c
 const omitMarkdown = fs.readFileSync('test/fixtures/omit.md', 'utf-8');
 const omitHTML = fs.readFileSync('test/fixtures/omit.html', 'utf-8');
 
-
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
 const endOfLine = os.EOL;
 
+/**
+ * @param {string} text
+ */
 function adjustEOL(text) {
 	if ('\n' !== endOfLine) {
 		text = text.replace(/([^\r])\n/g, '$1' + endOfLine);
@@ -119,7 +121,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customHeading = 'Heading with custom formatting 123abc';
 		md.use(markdownItTOC, {
-			format: function (str) { return customHeading; }
+			format: (str) => { return customHeading; }
 		});
 		assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
 	});
@@ -312,4 +314,35 @@ describe('Testing Markdown rendering', () => {
 		md.use(markdownItTOC, { omitTag: '<!-- omit from toc -->' });
 		assert.equal(adjustEOL(md.render(omitMarkdown)), omitHTML);
 	});
+
+	test('Whitespace is maintained in custom format param', () => {
+		const md = new markdownIt();
+		md.use(markdownItAttrs);
+		md.use(markdownItAnchor);
+		md.use(markdownItTOC, {
+			format: (str, md) => {
+				const hasSpaces = /\s{5,}/.test(str);
+				assert.equal(hasSpaces, true, `String passed to format function contains multiple spaces: '${str}'`);
+				return md.renderInline(str);
+			}
+		});
+		md.render('# Heading with     5 spaces\n\n[[toc]]');
+	});
+
+	test('No whitespace at end of headline when using custom attributes, fixes #67', () => {
+		const md = new markdownIt();
+		md.use(markdownItAttrs);
+		md.use(markdownItAnchor);
+		md.use(markdownItTOC, {
+			format: (str, md) => {
+				const hasSpaces = /\s{1,}$/.test(str);
+				assert.equal(hasSpaces, false, `String passed to format function has unexpected space at end: '${str}'`);
+				return md.renderInline(str);
+			}
+		});
+		md.render('# Heading with spaces at end  \n\n[[toc]]');
+		md.render('# Another heading with custom attrs and tabs\t{#custom-id}\n[[toc]]');
+		md.render('# A third heading with custom attrs and spaces    {#custom-id}\n[[toc]]');
+	});
+
 });
