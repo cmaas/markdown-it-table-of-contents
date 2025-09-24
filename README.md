@@ -26,9 +26,9 @@ Then add `[[toc]]` where you want the table of contents to be added in your docu
 
 *Want to use a table of contents generator client-side in the browser? Try my `<table-of-contents>` webcomponent: [table-of-contents-element on GitHub](https://github.com/cmaas/table-of-contents-element). Advantage: can use more sophisticated query selector and better support for HTML customization.*
 
-## Example markdown
+## Example Markdown
 
-This markdown:
+This Markdown:
 
 ``` markdown
 # Heading
@@ -113,6 +113,8 @@ md.use(markdownItTOC, {
 });
 ```
 
+**Slugify:** By default, markdown-it-table-of-contents collects all headings and renders a nested list. It uses the `slugify()` function to create anchor targets for the links in the list. However, the headlines in your Markdown document are **not** touched by markdown-it-table-of-contents. You'd have a nice table of contents, but the links don't link to anything. That's why you need another plugin to generate ids (anchor link targets) for all of your headlines. See section *Recommended Plugins* below.
+
 **Advanced headline text extraction / manipulation:**
 
 By default (and for historical consistency), formatting in headlines is dropped. If you have this headline:
@@ -125,7 +127,7 @@ it will be shown as
 ```
 in your TOC. Please note that the alt text of the image is dropped. That is because `getTokensText` filters for `text` and `code_inline` token types only.
 
-If you want to keep formatting in headlines, you can provide a custom `getTokensText` function as an option:
+If you want to keep formatting in headlines, you can provide a custom `getTokensText` function as an option. If you do this and you do not use a plugin to slugify headlines, you should also provide a custom `slugify` function. If you don't, the default `slugify` function will receive the raw Markdown text from a headline, which most likely contains invalid URL characters:
 
 ```js
 md.use(markdownItTOC, {
@@ -138,7 +140,9 @@ md.use(markdownItTOC, {
   }
 });
 ```
-The data flow is as follows: `getTokensText` extracts text from a headline and passes this as first param to `slugify` and `format`. By default, only text elements are extracted and formatting is lost. See the source code to understand how this is done. In the above example, `getTokensText` returns the raw Markdown content of the headline token. The default `format` function receives the raw Markdown as first param and uses `md.renderInline(content)` to keep the formatting. However, the default `slugify` doesn't drop weird characters. You either need to provide your own slugify function or use `rawToken` in `slugify` to filter for text elements only that serve as the slug. It is strongly recommended to use plugins like [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor) that assign IDs to headlines so that you don't need to use `slugify` at all. If a headline already has an anchor element, `slugify` is never called.
+The data flow is as follows: `getTokensText` extracts text from a headline and passes this as first param to `slugify` and `format`. By default, only text elements are extracted and formatting is lost. See the source code to understand how this is done. In the above example, `getTokensText` returns the raw Markdown content of the headline token. The default `format` function receives the raw Markdown as first param and uses `md.renderInline(content)` to keep the formatting. However, the default `slugify` doesn't drop weird characters. As mentioned above, you either need to provide your own slugify function or use `rawToken` in `slugify` to filter for text elements only that serve as the slug.
+
+It is strongly recommended to use plugins like [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor) that assign IDs to headlines so that you don't need to use `slugify` at all. If a headline already has an anchor element, `slugify` is never called.
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
@@ -156,11 +160,11 @@ function format(content, md) {
 
 ## Recommended plugins
 
-By default, markdown-it-table-of-contents collects all headings and renders a nested list. It uses the `slugify()` function to create anchor targets for the links in the list. However, the headlines in your markdown document are not touched by markdown-it-table-of-contents. You'd have a nice table of contents, but the links don't link to anything. That's why you need another plugin to generate ids (anchor link targets) for all of your headlines. There are two recommended plugins to achieve this:
+`markdown-it-table-of-contents` only creates a TOC with anchor links to headlines and doesn't modify headlines in your document. By default, your headlines won't have ids so all links in the TOC are basically dead. The following plugins are strongly recommended to attach an id to all headlines, which are then used within the TOC as link targets.
 
 ### [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor)
 
-This plugin transforms all headlines in a markdown document so that the HTML code includes an id. It *slugifies* the headline:
+This plugin transforms all headlines in a Markdown document so that the HTML code includes an id. It *slugifies* the headline:
 
 ```markdown
 ## Hello world, I think you should read this article
