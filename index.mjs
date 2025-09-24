@@ -9,11 +9,35 @@
 * Step 3: Turn the nested tree into HTML code.
 */
 
-const slugify = function (/** @type {any} */ s) {
-	return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
+// --- Default helpers and options ---
+
+/**
+ * Slugify a string to be used as anchor
+ * @param {string} text Text to slugify
+ * @param {string} rawToken Raw token to extract text from
+ * @returns {string} Slugified anchor string
+ */
+function slugify(text, rawToken) {
+	return encodeURIComponent(String(text).trim().toLowerCase().replace(/\s+/g, '-'));
 };
 
-const transformContainerOpen = function (/** @type {string} */ containerClass, /** @type {string} */ containerHeaderHtml) {
+/**
+ * Default formatter for headline text
+ * @param {string} content Text content of the headline
+ * @param {*} md Markdown-it instance
+ * @returns {string} Formatted content
+ */
+function format(content, md) {
+	return md.renderInline(content);
+}
+
+/**
+ * Generates the opening HTML for a container with a specified class and optional header HTML.
+ * @param {string} containerClass The CSS class to apply to the container div
+ * @param {string} containerHeaderHtml Optional HTML to include as the container's header
+ * @returns {string} HTML string
+ */
+function transformContainerOpen(containerClass, containerHeaderHtml) {
 	let tocOpenHtml = '<div class="' + containerClass + '">';
 	if (containerHeaderHtml) {
 		tocOpenHtml += containerHeaderHtml;
@@ -21,7 +45,12 @@ const transformContainerOpen = function (/** @type {string} */ containerClass, /
 	return tocOpenHtml;
 };
 
-const transformContainerClose = function (/** @type {string} */ containerFooterHtml) {
+/**
+ * Generates the closing HTML / footer for a container
+ * @param {string} containerFooterHtml The HTML string to be used for closing the container
+ * @returns {string} HTML string
+ */
+function transformContainerClose(/** @type {string} */ containerFooterHtml) {
 	let tocFooterHtml = '';
 	if (containerFooterHtml) {
 		tocFooterHtml = containerFooterHtml;
@@ -29,29 +58,44 @@ const transformContainerClose = function (/** @type {string} */ containerFooterH
 	return tocFooterHtml + '</div>';
 };
 
+/**
+ * Helper to extract text from tokens, same function as in markdown-it-anchor
+ * @param {Array<any>} tokens Tokens
+ * @param {string} rawToken Raw token to extract text from
+ * @returns {string}
+ */
+function getTokensText(tokens, rawToken) {
+	return tokens
+		.filter(t => ['text', 'code_inline'].includes(t.type))
+		.map(t => t.content)
+		.join('')
+		.trim();
+}
+
 const defaultOptions = {
 	includeLevel: [1, 2],
 	containerClass: 'table-of-contents',
-	slugify: slugify,
+	slugify,
 	markerPattern: /^\[\[toc\]\]/im,
 	omitTag: '<!-- omit from toc -->',
 	listType: 'ul',
-	format: function (/** @type {any} */ content, /** @type {any} */ md) {
-		return md.renderInline(content);
-	},
+	format,
 	containerHeaderHtml: undefined,
 	containerFooterHtml: undefined,
 	transformLink: undefined,
-	transformContainerOpen: transformContainerOpen,
-	transformContainerClose: transformContainerClose,
-	getTokensText: getTokensText
+	transformContainerOpen,
+	transformContainerClose,
+	getTokensText
 };
+
+// --- Types ---
 
 /**
 * @typedef {Object} HeadlineItem
 * @property {number} level Headline level
 * @property {string | null} anchor Anchor target
 * @property {string} text Text of headline
+* @property {any | null} token Raw token of headline
 */
 
 /**
@@ -63,18 +107,7 @@ const defaultOptions = {
 * @property {TocItem | null} parent Parent this item belongs to
 */
 
-/**
- * Helper to extract text from tokens, same function as in markdown-it-anchor
- * @param {Array<any>} tokens Tokens
- * @returns {string}
- */
-function getTokensText(tokens) {
-	return tokens
-		.filter(t => ['text', 'code_inline'].includes(t.type))
-		.map(t => t.content)
-		.join('')
-		.trim();
-}
+// --- TOC builder ---
 
 /**
 * Finds all headline items for the defined levels in a Markdown document.
@@ -84,13 +117,10 @@ function getTokensText(tokens) {
 * @returns {Array<HeadlineItem>}
 */
 function findHeadlineElements(levels, tokens, options) {
-	/**
-	 * @type {HeadlineItem[]}
-	 */
+	/** @type {HeadlineItem[]} */
 	const headings = [];
-	/**
-	 * @type {HeadlineItem | null}
-	 */
+
+	/** @type {HeadlineItem | null} */
 	let currentHeading = null;
 
 	tokens.forEach((/** @type {*} */ token, /** @type {number} */ index) => {
@@ -105,15 +135,17 @@ function findHeadlineElements(levels, tokens, options) {
 				currentHeading = {
 					level: level,
 					text: '',
-					anchor: id || null
+					anchor: id || null,
+					token: null
 				};
 			}
 		}
 		else if (currentHeading && token.type === 'inline') {
-			const textContent = options.getTokensText(token.children);
+			const textContent = options.getTokensText(token.children, token);
 			currentHeading.text = textContent;
+			currentHeading.token = token;
 			if (!currentHeading.anchor) {
-				currentHeading.anchor = options.slugify(textContent, token.content);
+				currentHeading.anchor = options.slugify(textContent, token);
 			}
 		}
 		else if (token.type === 'heading_close') {
@@ -216,7 +248,7 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 }
 
 /**
- * Recursively turns a nested tree of tocItems to HTML.
+ * Recursively turns a nested tree of tocItems to HTML
  * @param {TocItem} tocItem
  * @param {any} options
  * @param {any} md
@@ -299,7 +331,6 @@ const markdownItTableOfContents = function (/** @type {any} */ md, /** @type {an
 	};
 
 	md.renderer.rules.toc_body = function (/** @type {any} */ tokens) {
-		console.log('TOKENS', tokens);
 		const headlineItems = findHeadlineElements(options.includeLevel, tokens, options);
 		const tocTree = flatHeadlineItemsToNestedTree(headlineItems);
 		const html = tocItemToHtml(tocTree, options, md);

@@ -55,6 +55,8 @@ const anchorsSpecialCharsHTML = fs.readFileSync('test/fixtures/anchors-special-c
 const omitMarkdown = fs.readFileSync('test/fixtures/omit.md', 'utf-8');
 const omitHTML = fs.readFileSync('test/fixtures/omit.html', 'utf-8');
 
+const headingWithFormattingHTML = fs.readFileSync('test/fixtures/heading-with-formatting.html', 'utf-8');
+
 const slugify = (s) => encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 
 const endOfLine = os.EOL;
@@ -70,6 +72,7 @@ function adjustEOL(text) {
 }
 
 describe('Testing Markdown rendering', () => {
+
 	test('Parses correctly with default settings', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC);
@@ -121,7 +124,9 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customHeading = 'Heading with custom formatting 123abc';
 		md.use(markdownItTOC, {
-			format: (str) => { return customHeading; }
+			format: function (str) {
+				return customHeading;
+			}
 		});
 		assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
 	});
@@ -329,7 +334,7 @@ describe('Testing Markdown rendering', () => {
 		md.render('# Heading with     5 spaces\n\n[[toc]]');
 	});
 
-	test('No whitespace at end of headline when using custom attributes, fixes #67', () => {
+	test('No whitespace at end of headline when using custom attributes, fixes #67 part 2', () => {
 		const md = new markdownIt();
 		md.use(markdownItAttrs);
 		md.use(markdownItAnchor);
@@ -345,4 +350,34 @@ describe('Testing Markdown rendering', () => {
 		md.render('# A third heading with custom attrs and spaces    {#custom-id}\n[[toc]]');
 	});
 
+	test('Keep formatting in headlines, fixes #67 part 1', () => {
+		const md = new markdownIt();
+		md.use(markdownItTOC, {
+			getTokensText: (tokens, rawToken) => {
+				assert.equal(rawToken.content, 'Heading with *emphasis* and **bold** and `code` and ![img](test.png)');
+				return rawToken.content;
+			},
+			slugify: (text, rawToken) => {
+				assert.equal(text, 'Heading with *emphasis* and **bold** and `code` and ![img](test.png)');
+				const s = rawToken.children.map(t => t.content).join('').trim();
+				return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
+			},
+			format: (str, md) => {
+				assert.equal(str, 'Heading with *emphasis* and **bold** and `code` and ![img](test.png)');
+				return md.renderInline(str);
+			}
+		});
+		const result = md.render('# Heading with *emphasis* and **bold** and `code` and ![img](test.png)\n[[toc]]');
+		assert.equal(adjustEOL(result), headingWithFormattingHTML);
+	});
+
+	test('Default: drop formatting in headlines', () => {
+		const md = new markdownIt();
+		md.use(markdownItTOC);
+		const result = md.render('# Heading with *emphasis* and **bold** and `code` and ![img](test.png)\n[[toc]]');
+		console.log(result);
+		const html = `<h1>Heading with <em>emphasis</em> and <strong>bold</strong> and <code>code</code> and <img src="test.png" alt="img"></h1>
+<div class="table-of-contents"><ul><li><a href="#heading-with-emphasis-and-bold-and-code-and">Heading with emphasis and bold and code and</a></li></ul></div>\n`;
+		assert.equal(adjustEOL(result), adjustEOL(html));
+	});
 });

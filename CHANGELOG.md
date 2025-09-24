@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-09-24
+
+* **Changed:** `getTokensText(tokens)` now trims whitespace from headlines. It did so before most of the time, but when used together with custom attributes via the [markdown-it-attrs](https://www.npmjs.com/package/markdown-it-attrs) plugin and there was more than one space between headline text and custom attribute (e. g. `## Headline  {#custom-id}`), this lead to trailing whitespaces (fixes #67 part 2)
+* **Changed:** `slugify(s)` had an undocumented second parameter, which contained the raw Markdown text. This is now a *documented* parameter, which receives the raw token. If you used this undocumented parameter before, you can achieve the old behavior like this: `slugify: (s, token) => do_your_thing_with(token.content)`
+* **Changed:** `getTokensText(tokens, rawToken)` has now a second parameter and receives the raw token. You can use this to modify how text is extracted from a headline. See README for examples. Fixes #67 part 1.
+
+***
+
 ## [1.0.0] - 2025-08-28
 
 * Runs stable for years now, hence push version to 1.0. No breaking changes to v0.9.0.

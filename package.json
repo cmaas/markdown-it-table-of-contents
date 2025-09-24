@@ -1,6 +1,6 @@
 {
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"name": "markdown-it-table-of-contents",
 	"main": "index.js",
 	"module": "index.mjs",
@@ -35,8 +35,8 @@
 		"Original author: Martin Lissmyr <https://github.com/martinlissmyr>"
 	],
 	"devDependencies": {
-		"markdown-it": "~14.1.0",
-		"markdown-it-anchor": "~9.2.0",
-		"markdown-it-attrs": "^4.3.1"
+		"markdown-it": "14.1.0",
+		"markdown-it-anchor": "9.2.0",
+		"markdown-it-attrs": "4.3.1"
 	}
 }
