@@ -105,6 +105,15 @@ describe('Testing Markdown rendering', () => {
 		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
 	});
 
+	test('Custom markerPattern without bracket prefix', () => {
+		const md = new markdownIt();
+		const customMarker = '{{toc}}';
+		md.use(markdownItTOC, {
+			'markerPattern': /^\{\{toc\}\}/im
+		});
+		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
+	});
+
 	test('Parses correctly with listType set', () => {
 		const md = new markdownIt();
 		const customListType = 'ol';
