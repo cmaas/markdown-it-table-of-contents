@@ -288,12 +288,7 @@ const markdownItTableOfContents = function (/** @type {any} */ md, /** @type {an
 		const start = state.bMarks[startLine] + state.tShift[startLine];
 		const max = state.eMarks[startLine];
 
-		// Reject if the token does not start with [
-		if (state.src.charCodeAt(start) !== 0x5B /* [ */) {
-			return false;
-		}
-
-		// Detect [[toc]] markup
+		// Detect markup
 		match = tocRegexp.exec(state.src.substring(start, max));
 		match = !match ? [] : match.filter(function (/** @type {any} */ m) { return m; });
 		if (match.length < 1) {
@@ -308,7 +303,7 @@ const markdownItTableOfContents = function (/** @type {any} */ md, /** @type {an
 
 		// Build content
 		token = state.push('toc_open', 'toc', 1);
-		token.markup = '[[toc]]';
+		token.markup = match[0];
 		token.map = [startLine, state.line];
 
 		token = state.push('toc_body', '', 0);
