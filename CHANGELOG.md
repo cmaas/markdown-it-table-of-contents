@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-24
+
+* **Changed:** `markerPattern` now also supports patterns that don't start with a bracket such as `{{{toc}}}` (thanks @parksb)
+
+***
+
 ## [1.1.0] - 2025-09-24
 
 * **Changed:** `getTokensText(tokens)` now trims whitespace from headlines. It did so before most of the time, but when used together with custom attributes via the [markdown-it-attrs](https://www.npmjs.com/package/markdown-it-attrs) plugin and there was more than one space between headline text and custom attribute (e. g. `## Headline  {#custom-id}`), this lead to trailing whitespaces (fixes #67 part 2)
