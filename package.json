@@ -35,7 +35,7 @@
 		"Original author: Martin Lissmyr <https://github.com/martinlissmyr>"
 	],
 	"devDependencies": {
-		"markdown-it": "14.1.0",
+		"markdown-it": "14.2.0",
 		"markdown-it-anchor": "9.2.0",
 		"markdown-it-attrs": "4.3.1"
 	}
