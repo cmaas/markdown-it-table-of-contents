@@ -142,21 +142,42 @@ md.use(markdownItTOC, {
 ```
 The data flow is as follows: `getTokensText` extracts text from a headline and passes this as first param to `slugify` and `format`. By default, only text elements are extracted and formatting is lost. See the source code to understand how this is done. In the above example, `getTokensText` returns the raw Markdown content of the headline token. The default `format` function receives the raw Markdown as first param and uses `md.renderInline(content)` to keep the formatting. However, the default `slugify` doesn't drop weird characters. As mentioned above, you either need to provide your own slugify function or use `rawToken` in `slugify` to filter for text elements only that serve as the slug.
 
+Note: `rawToken.content` is the *unprocessed* Markdown source of the headline. Syntax consumed by other plugins is still in there, e.g. `{#custom-id}` from [markdown-it-attrs](https://www.npmjs.com/package/markdown-it-attrs) would show up in your TOC. In that case, render the headline's tokens in `format` instead (see below).
+
 It is strongly recommended to use plugins like [markdown-it-anchor](https://www.npmjs.com/package/markdown-it-anchor) that assign IDs to headlines so that you don't need to use `slugify` at all. If a headline already has an anchor element, `slugify` is never called.
 
 `format` is an optional function for changing how the headings are displayed in the TOC.
 
-By default, TOC headings will be formatted using markdown-it's internal MD formatting rules (i.e. it will be formatted using the same rules / extensions as other markdown in your document). You can override this behavior by specifying a custom `format` function. The function should accept two arguments:
+By default, TOC headings will be formatted using markdown-it's internal MD formatting rules (i.e. it will be formatted using the same rules / extensions as other markdown in your document). You can override this behavior by specifying a custom `format` function. The function receives these arguments:
 
-1. `content` - The heading text, as a markdown string.
+1. `content` - The heading text, as a markdown string (the result of `getTokensText`).
 2. `md` – markdown-it's internal markdown parser object. This should only be need for advanced use cases.
+3. `link` – The anchor the TOC entry links to (after `transformLink`).
+4. `rawToken` – The raw inline token of the headline. Its `children` are the parsed tokens of the headline, already processed by all other plugins.
 
 ```js
-function format(content, md) {
+function format(content, md, link, rawToken) {
   // manipulate the headings as you like here.
   return manipulatedHeadingString;
 }
 ```
+
+**Render headlines exactly as in the document (math, custom attributes, etc.):**
+
+Plugins like [markdown-it-mathjax3](https://github.com/tani/markdown-it-mathjax3) produce token types (e.g. `math_inline`) that the default `getTokensText` drops, so `# $\mathrm{\LaTeX}$ Projects` would only show up as `Projects` in the TOC. To keep everything that is rendered in the headline, render the headline's tokens directly. Links (including permalinks from markdown-it-anchor) are dropped because they can't be nested in the TOC link:
+
+```js
+md.use(markdownItTOC, {
+  format: (content, md, link, rawToken) => md.renderer.renderInline(
+    rawToken.children.filter(t =>
+      t.type !== 'link_open' && t.type !== 'link_close' && !(t.meta && t.meta.isPermalinkSymbol)),
+    md.options,
+    {}
+  ).trim()
+});
+```
+
+Combined with markdown-it-attrs, `# $\mathrm{\LaTeX}$ Projects {#latex-projects}` then shows the rendered formula plus `Projects` in the TOC and links to `#latex-projects`. The anchor is not derived from `format`. It comes from the headline's `id` (set by markdown-it-attrs or markdown-it-anchor) or, if there is none, from `slugify`.
 
 ## Recommended plugins
 

@@ -17,9 +17,11 @@ function slugify(text, rawToken) {
  * Default formatter for headline text
  * @param {string} content Text content of the headline
  * @param {*} md Markdown-it instance
+ * @param {string | null} link Anchor of the headline (after `transformLink`)
+ * @param {any | null} rawToken Raw inline token of the headline
  * @returns {string} Formatted content
  */
-function format(content, md) {
+function format(content, md, link, rawToken) {
 	return md.renderInline(content);
 }
 
@@ -95,6 +97,7 @@ const defaultOptions = {
 * @property {number} level Item level
 * @property {string} text Text of link
 * @property {string | null} anchor Target of link
+* @property {any | null} token Raw inline token of the headline
 * @property {Array<TocItem>} children Sub-items for this list item
 * @property {TocItem | null} parent Parent this item belongs to
 */
@@ -187,11 +190,12 @@ function getMinLevel(headlineItems) {
 * @param {number} level
 * @param {string} text
 * @param {string | null} anchor
+* @param {any | null} token
 * @param {TocItem} rootNode
 * @returns {TocItem}
 */
-function addListItem(level, text, anchor, rootNode) {
-	const listItem = { level, text, anchor, children: [], parent: rootNode };
+function addListItem(level, text, anchor, token, rootNode) {
+	const listItem = { level, text, anchor, token, children: [], parent: rootNode };
 	rootNode.children.push(listItem);
 	return listItem;
 }
@@ -204,7 +208,7 @@ function addListItem(level, text, anchor, rootNode) {
 function flatHeadlineItemsToNestedTree(headlineItems) {
 	// create a root node with no text that holds the entire TOC. this won't be rendered, but only its children
 	/** @type {TocItem} */
-	const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: '', children: [], parent: null };
+	const toc = { level: getMinLevel(headlineItems) - 1, anchor: null, text: '', token: null, children: [], parent: null };
 	// pointer that tracks the last root item of the current list
 	let currentRootNode = toc;
 	// pointer that tracks the last item (to turn it into a new root node if necessary)
@@ -216,14 +220,15 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 			// eslint-disable-next-line no-unused-vars
 			Array.from({ length: headlineItem.level - prevListItem.level }).forEach(_ => {
 				currentRootNode = prevListItem;
-				prevListItem = addListItem(headlineItem.level, '', null, currentRootNode);
+				prevListItem = addListItem(headlineItem.level, '', null, null, currentRootNode);
 			});
 			prevListItem.text = headlineItem.text;
 			prevListItem.anchor = headlineItem.anchor;
+			prevListItem.token = headlineItem.token;
 		}
 		// if level is same, add to the current list
 		else if (headlineItem.level === prevListItem.level) {
-			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
+			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, headlineItem.token, currentRootNode);
 		}
 		// if level is smaller, set current list to currentlist.parent
 		else if (headlineItem.level < prevListItem.level) {
@@ -232,7 +237,7 @@ function flatHeadlineItemsToNestedTree(headlineItems) {
 					currentRootNode = currentRootNode.parent;
 				}
 			}
-			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, currentRootNode);
+			prevListItem = addListItem(headlineItem.level, headlineItem.text, headlineItem.anchor, headlineItem.token, currentRootNode);
 		}
 	});
 
@@ -254,7 +259,7 @@ function tocItemToHtml(tocItem, options, md) {
 			anchor = options.transformLink(anchor);
 		}
 
-		let text = childItem.text ? options.format(childItem.text, md, anchor) : null;
+		let text = (childItem.text || childItem.token) ? options.format(childItem.text, md, anchor, childItem.token) : null;
 
 		li += anchor ? `<a href="#${anchor}">${text}</a>` : (text || '');
 

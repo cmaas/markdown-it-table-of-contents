@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-11-12
+
+* **Added:** `format(content, md, link, rawToken)` now receives the raw inline token of the headline as 4th parameter. This allows rendering the TOC entry from the headline's parsed tokens, so content from plugins like markdown-it-mathjax3 (`$\LaTeX$`) is kept and markdown-it-attrs syntax (`{#id}`) doesn't leak into the TOC. See README for an example.
+* **Changed:** Bumped dev dependencies
+
+***
+
 ## [1.2.0] - 2026-03-24
 
 * **Changed:** `markerPattern` now also supports patterns that don't start with a bracket such as `{{{toc}}}` (thanks @parksb)

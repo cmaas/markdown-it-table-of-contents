@@ -1,9 +1,9 @@
 //@ts-check
 
 import assert from 'node:assert';
-import test, { describe } from 'node:test';
 import fs from 'node:fs';
 import os from 'node:os';
+import test, { describe } from 'node:test';
 import markdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import markdownItAttrs from 'markdown-it-attrs';
@@ -72,7 +72,6 @@ function adjustEOL(text) {
 }
 
 describe('Testing Markdown rendering', () => {
-
 	test('Parses correctly with default settings', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC);
@@ -82,7 +81,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with includeLevel set', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [2]
+			includeLevel: [2]
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simple1LevelHTML);
 	});
@@ -91,7 +90,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customContainerClass = 'custom-container-class';
 		md.use(markdownItTOC, {
-			'containerClass': customContainerClass
+			containerClass: customContainerClass
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(defaultContainerClass, customContainerClass));
 	});
@@ -100,7 +99,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customMarker = '[[custom-marker]]';
 		md.use(markdownItTOC, {
-			'markerPattern': /^\[\[custom-marker\]\]/im
+			markerPattern: /^\[\[custom-marker\]\]/im
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
 	});
@@ -109,7 +108,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customMarker = '{{toc}}';
 		md.use(markdownItTOC, {
-			'markerPattern': /^\{\{toc\}\}/im
+			markerPattern: /^\{\{toc\}\}/im
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown.replace(defaultMarker, customMarker))), simpleDefaultHTML);
 	});
@@ -118,7 +117,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customListType = 'ol';
 		md.use(markdownItTOC, {
-			'listType': customListType
+			listType: customListType
 		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleDefaultHTML.replace(new RegExp(defaultListType, 'g'), customListType));
 	});
@@ -133,9 +132,7 @@ describe('Testing Markdown rendering', () => {
 		const md = new markdownIt();
 		const customHeading = 'Heading with custom formatting 123abc';
 		md.use(markdownItTOC, {
-			format: function (str) {
-				return customHeading;
-			}
+			format: (str) => customHeading
 		});
 		assert.equal(md.render(simpleMarkdown).includes(customHeading), true);
 	});
@@ -143,7 +140,7 @@ describe('Testing Markdown rendering', () => {
 	test('Custom formatting includes markdown and link', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			format: function (str, md, link) {
+			format: (str, md, link) => {
 				assert.ok(markdownIt.prototype.isPrototypeOf(md));
 				assert.notEqual(link, null);
 				return 'customHeading';
@@ -176,25 +173,23 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with container header and footer html set', () => {
 		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
-		md.use(markdownItTOC,
-			{
-				slugify,
-				containerHeaderHtml: '<div class="header">Contents</div>',
-				containerFooterHtml: '<div class="footer">Footer</div>',
-			});
+		md.use(markdownItTOC, {
+			slugify,
+			containerHeaderHtml: '<div class="header">Contents</div>',
+			containerFooterHtml: '<div class="footer">Footer</div>'
+		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithHeaderFooterHTML);
 	});
 
 	test('Generates TOC, with custom transformed link', () => {
 		const md = new markdownIt();
 		md.use(markdownItAnchor, markdownItAnchorOpts);
-		md.use(markdownItTOC,
-			{
-				slugify,
-				transformLink: (href) => {
-					return href + '&type=test';
-				},
-			});
+		md.use(markdownItTOC, {
+			slugify,
+			transformLink: (href) => {
+				return href + '&type=test';
+			}
+		});
 		assert.equal(adjustEOL(md.render(simpleMarkdown)), simpleWithTransformLink);
 	});
 
@@ -208,7 +203,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with duplicate headers', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [1, 2, 3, 4]
+			includeLevel: [1, 2, 3, 4]
 		});
 		md.use(markdownItAnchor, markdownItAnchorOpts);
 		assert.equal(adjustEOL(md.render(simpleWithDuplicateHeadings)), simpleWithDuplicateHeadingsHTML);
@@ -217,7 +212,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with multiple levels', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [1, 2, 3, 4]
+			includeLevel: [1, 2, 3, 4]
 		});
 		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel1234HTML);
 	});
@@ -225,7 +220,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with subset of multiple levels', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [2, 3]
+			includeLevel: [2, 3]
 		});
 		assert.equal(adjustEOL(md.render(multiLevelMarkdown)), multiLevel23HTML);
 	});
@@ -233,7 +228,7 @@ describe('Testing Markdown rendering', () => {
 	test('Can manage headlines in a strange order', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [1, 2, 3]
+			includeLevel: [1, 2, 3]
 		});
 		assert.equal(adjustEOL(md.render(strangeOrderMarkdown)), strangeOrderHTML);
 	});
@@ -241,7 +236,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly with custom heading id attrs', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [1, 2, 3, 4]
+			includeLevel: [1, 2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsHTML);
@@ -250,7 +245,7 @@ describe('Testing Markdown rendering', () => {
 	test('Parses correctly when combining markdown-it-attrs and markdown-it-anchor', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [1, 2, 3, 4]
+			includeLevel: [1, 2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		assert.equal(adjustEOL(md.render(customAttrsMarkdown)), customAttrsWithAnchorsHTML);
@@ -259,7 +254,7 @@ describe('Testing Markdown rendering', () => {
 	test('Full example', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			'includeLevel': [2, 3, 4]
+			includeLevel: [2, 3, 4]
 		});
 		md.use(markdownItAttrs);
 		md.use(markdownItAnchor, markdownItAnchorOpts);
@@ -314,12 +309,15 @@ describe('Testing Markdown rendering', () => {
 	test('getTokensText', () => {
 		const md = new markdownIt();
 		md.use(markdownItTOC, {
-			getTokensText: tokens => tokens.filter(t => ['text', 'image'].includes(t.type)).map(t => t.content).join('')
+			getTokensText: (tokens) =>
+				tokens
+					.filter((t) => ['text', 'image'].includes(t.type))
+					.map((t) => t.content)
+					.join('')
 		});
 		assert.equal(
 			md.render('# H1 ![image](link) `code` _em_' + '\n' + '[[toc]]'),
-			'<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' +
-			'<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
+			'<h1>H1 <img src="link" alt="image"> <code>code</code> <em>em</em></h1>\n' + '<div class="table-of-contents"><ul><li><a href="#h1-image-em">H1 image  em</a></li></ul></div>\n'
 		);
 	});
 
@@ -368,7 +366,10 @@ describe('Testing Markdown rendering', () => {
 			},
 			slugify: (text, rawToken) => {
 				assert.equal(text, 'Heading with *emphasis* and **bold** and `code` and ![img](test.png)');
-				const s = rawToken.children.map(t => t.content).join('').trim();
+				const s = rawToken.children
+					.map((t) => t.content)
+					.join('')
+					.trim();
 				return encodeURIComponent(String(s).trim().toLowerCase().replace(/\s+/g, '-'));
 			},
 			format: (str, md) => {
@@ -388,5 +389,120 @@ describe('Testing Markdown rendering', () => {
 		const html = `<h1>Heading with <em>emphasis</em> and <strong>bold</strong> and <code>code</code> and <img src="test.png" alt="img"></h1>
 <div class="table-of-contents"><ul><li><a href="#heading-with-emphasis-and-bold-and-code-and">Heading with emphasis and bold and code and</a></li></ul></div>\n`;
 		assert.equal(adjustEOL(result), adjustEOL(html));
+	});
+	test('format receives the raw inline token of the headline as 4th param', () => {
+		const md = new markdownIt();
+		const seen = [];
+		md.use(markdownItTOC, {
+			includeLevel: [1, 2, 3],
+			format: (str, md, link, rawToken) => {
+				assert.equal(rawToken.type, 'inline');
+				seen.push(rawToken.content);
+				return md.renderInline(str);
+			}
+		});
+		// h3 directly below h1 creates an empty intermediate item, which must not call format
+		md.render('# First *one*\n### Second\n[[toc]]');
+		assert.deepEqual(seen, ['First *one*', 'Second']);
+	});
+
+	describe('Headlines with inline math (e.g. markdown-it-mathjax3)', () => {
+		/**
+		 * Minimal stand-in for markdown-it-mathjax3: `$...$` becomes a `math_inline` token
+		 * @param {any} md
+		 */
+		function mathPlugin(md) {
+			md.inline.ruler.after('escape', 'math_inline', (/** @type {any} */ state, /** @type {boolean} */ silent) => {
+				if (state.src[state.pos] !== '$') return false;
+				const end = state.src.indexOf('$', state.pos + 1);
+				if (end < 0) return false;
+				if (!silent) {
+					const token = state.push('math_inline', 'math', 0);
+					token.markup = '$';
+					token.content = state.src.slice(state.pos + 1, end);
+				}
+				state.pos = end + 1;
+				return true;
+			});
+			md.renderer.rules.math_inline = (/** @type {any} */ tokens, /** @type {number} */ idx) => `<mjx>${tokens[idx].content}</mjx>`;
+		}
+
+		/**
+		 * Recipe from the README: render the TOC entry from the headline's tokens
+		 * @param {string} str
+		 * @param {any} md
+		 * @param {string | null} link
+		 * @param {any} rawToken
+		 */
+		const formatFromTokens = (str, md, link, rawToken) => md.renderer.renderInline(
+			rawToken.children.filter((/** @type {any} */ t) =>
+				t.type !== 'link_open' && t.type !== 'link_close' && !(t.meta && t.meta.isPermalinkSymbol)),
+			md.options,
+			{}
+		).trim();
+
+		test('Default drops math from TOC text (same as markdown-it-anchor)', () => {
+			const md = new markdownIt();
+			md.use(mathPlugin);
+			md.use(markdownItAnchor);
+			md.use(markdownItTOC);
+			assert.equal(
+				md.render('# $\\mathrm{\\LaTeX}$ Projects\n\n[[toc]]'),
+				'<h1 id="projects" tabindex="-1"><mjx>\\mathrm{\\LaTeX}</mjx> Projects</h1>\n' +
+				'<div class="table-of-contents"><ul><li><a href="#projects">Projects</a></li></ul></div>\n'
+			);
+		});
+
+		test('Renders math in TOC and uses custom id from markdown-it-attrs', () => {
+			const md = new markdownIt();
+			md.use(mathPlugin);
+			md.use(markdownItAttrs);
+			md.use(markdownItAnchor);
+			md.use(markdownItTOC, { format: formatFromTokens });
+			assert.equal(
+				md.render('# $\\mathrm{\\LaTeX}$ Projects {#latex-projects}\n\n[[toc]]'),
+				'<h1 id="latex-projects" tabindex="-1"><mjx>\\mathrm{\\LaTeX}</mjx> Projects</h1>\n' +
+				'<div class="table-of-contents"><ul><li><a href="#latex-projects"><mjx>\\mathrm{\\LaTeX}</mjx> Projects</a></li></ul></div>\n'
+			);
+		});
+
+		test('Raw token content still contains markdown-it-attrs syntax, rendered tokens do not', () => {
+			const md = new markdownIt();
+			md.use(mathPlugin);
+			md.use(markdownItAttrs);
+			md.use(markdownItTOC, {
+				format: (/** @type {string} */ str, /** @type {any} */ md, /** @type {string | null} */ link, /** @type {any} */ rawToken) => {
+					assert.equal(rawToken.content, '$x$ Projects {#latex-projects}');
+					const html = formatFromTokens(str, md, link, rawToken);
+					assert.equal(html, '<mjx>x</mjx> Projects');
+					return html;
+				}
+			});
+			md.render('# $x$ Projects {#latex-projects}\n\n[[toc]]');
+		});
+
+		test('Rendering from tokens drops headline links and markdown-it-anchor permalinks', () => {
+			const md = new markdownIt();
+			md.use(mathPlugin);
+			md.use(markdownItAnchor, { permalink: markdownItAnchor.permalink.linkInsideHeader() });
+			md.use(markdownItTOC, { format: formatFromTokens });
+			const html = md.render('# Sub [$x$ heading](http://www.test.com) *2*\n\n[[toc]]');
+			assert.ok(
+				html.includes('<div class="table-of-contents"><ul><li><a href="#sub-heading-2">Sub <mjx>x</mjx> heading <em>2</em></a></li></ul></div>'),
+				html
+			);
+		});
+
+		test('Headline consisting only of math is passed to format', () => {
+			const md = new markdownIt();
+			md.use(mathPlugin);
+			md.use(markdownItAttrs);
+			md.use(markdownItTOC, { format: formatFromTokens });
+			assert.equal(
+				md.render('# $E=mc^2$ {#energy}\n\n[[toc]]'),
+				'<h1 id="energy"><mjx>E=mc^2</mjx></h1>\n' +
+				'<div class="table-of-contents"><ul><li><a href="#energy"><mjx>E=mc^2</mjx></a></li></ul></div>\n'
+			);
+		});
 	});
 });
